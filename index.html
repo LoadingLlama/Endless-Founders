@@ -93,7 +93,7 @@
             .location{bottom:env(safe-area-inset-bottom,0.8rem);padding-bottom:0.8rem;left:1.5rem;font-size:0.6rem}
             .socials{bottom:env(safe-area-inset-bottom,0.8rem);padding-bottom:0.8rem;right:1.5rem;gap:14px}
             .socials svg{width:14px;height:14px}
-            .bottom-mark{bottom:env(safe-area-inset-bottom,0.8rem);padding-bottom:0.8rem;font-size:0.45rem}
+            .bottom-mark{display:none}
         }
     </style>
 </head>
@@ -159,25 +159,6 @@ function showForm(){
     },120);
 }
 
-// Click outside form → smooth quick revert to button
-document.addEventListener('click',function(e){
-    const form=document.getElementById('waitlistForm');
-    const cta=document.getElementById('ctaWrapper');
-    if(!form.classList.contains('visible')) return;
-    if(form.contains(e.target)) return;
-    // Hide form immediately
-    form.classList.remove('visible');
-    form.style.display='none';
-    form.style.opacity='';
-    form.style.transform='';
-    // Show button with quick fade in — no movement
-    cta.style.display='';
-    cta.style.opacity='0';
-    requestAnimationFrame(()=>{
-        cta.style.transition='opacity 0.2s ease';
-        cta.style.opacity='1';
-    });
-});
 
 // #6: Improved success state — saves to Supabase
 const SUPABASE_URL='https://ldkqwwnmzyrkinjdexzy.supabase.co';
