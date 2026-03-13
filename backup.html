@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Founders</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        html,body{height:100%;overflow:hidden}
+        body{font-family:'Outfit',sans-serif;background:#000;color:#f0eeea;display:flex;align-items:center;justify-content:center}
+        canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+        .bottom-fade{position:fixed;bottom:0;left:0;width:100%;height:35%;z-index:3;pointer-events:none;background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,0.7) 70%,rgba(0,0,0,0.85) 100%)}
+        .content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;width:100%;max-width:900px;background:radial-gradient(ellipse at center,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.3) 40%,transparent 70%);border-radius:20px}
+        .brand-name{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(3.5rem,10vw,8.5rem);letter-spacing:-0.02em;line-height:1;color:#f0eeea;margin-bottom:0.15em;opacity:0;transform:translateY(30px);animation:fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;text-shadow:0 4px 40px rgba(0,0,0,0.6)}
+        .brand-name em{font-style:italic;font-weight:300}
+        .descriptor{font-family:'Outfit',sans-serif;font-weight:300;font-size:clamp(0.65rem,1.4vw,0.8rem);letter-spacing:0.4em;text-transform:uppercase;color:#c5c3be;margin-bottom:3.5rem;opacity:0;transform:translateY(20px);animation:fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.7s forwards;text-shadow:0 1px 12px rgba(0,0,0,0.8)}
+        .waitlist-form{display:flex;align-items:center;width:100%;max-width:460px;opacity:0;transform:translateY(20px);animation:fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 1s forwards}
+        .waitlist-form input[type="email"]{flex:1;padding:15px 22px;font-family:'Outfit',sans-serif;font-weight:300;font-size:0.88rem;letter-spacing:0.02em;color:#f0eeea;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-right:none;border-radius:100px 0 0 100px;outline:none;transition:all 0.4s ease;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+        .waitlist-form input::placeholder{color:#7a7975;font-weight:300}
+        .waitlist-form input:focus{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.25)}
+        .waitlist-form button{padding:15px 26px;font-family:'Outfit',sans-serif;font-weight:400;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:#0a0a0a;background:#f0eeea;border:none;border-radius:0 100px 100px 0;cursor:pointer;transition:all 0.35s ease;white-space:nowrap}
+        .waitlist-form button:hover{background:#dddbd6;padding-right:30px}
+        .newsletter-note{font-family:'Outfit',sans-serif;font-weight:400;font-size:0.7rem;color:#d5d3ce;margin-top:1.1rem;letter-spacing:0.03em;line-height:1.5;opacity:0;animation:fadeIn 1s ease 1.5s forwards;text-shadow:0 1px 8px rgba(0,0,0,0.9),0 0 20px rgba(0,0,0,0.7)}
+        .success-message{display:none;font-family:'Outfit',sans-serif;font-weight:300;font-size:0.95rem;color:#f0eeea;letter-spacing:0.03em;opacity:0;transform:translateY(10px)}
+        .success-message.visible{display:block;animation:fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards}
+        .bottom-mark{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s ease 2s forwards}
+        .bottom-mark span{font-family:'Outfit',sans-serif;font-weight:300;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:#b0ada8;text-shadow:0 1px 8px rgba(0,0,0,0.9),0 0 20px rgba(0,0,0,0.7)}
+        .bottom-mark .dot{width:3px;height:3px;border-radius:50%;background:#b0ada8}
+        @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{to{opacity:1}}
+        @media(max-width:600px){.waitlist-form{flex-direction:column;gap:10px;max-width:320px}.waitlist-form input[type="email"]{border-radius:100px;border-right:1px solid rgba(255,255,255,0.12);text-align:center}.waitlist-form button{border-radius:100px;width:100%}.brand-name{font-size:clamp(2.6rem,13vw,4.5rem)}}
+    </style>
+</head>
+<body>
+    <canvas id="bg"></canvas>
+    <div class="bottom-fade"></div>
+    <div class="content">
+        <h1 class="brand-name"><em>Endless</em> Founders</h1>
+        <p class="descriptor">A founder residency</p>
+        <div class="waitlist-form" id="waitlistForm">
+            <input type="email" id="emailInput" placeholder="Enter your email" required>
+            <button type="button" onclick="handleSubmit()">Join Waitlist</button>
+        </div>
+        <div class="success-message" id="successMessage">You're on the list. We'll be in touch.</div>
+        <p class="newsletter-note" id="newsletterNote">Join the waitlist & newsletter — updates on the program and when applications open.</p>
+    </div>
+    <div class="bottom-mark"><span>Endless Founders</span><div class="dot"></div><span>2026</span></div>
+
+<script>
+const canvas = document.getElementById('bg');
+const gl = canvas.getContext('webgl', { alpha: false });
+
+function resize() {
+    // Only change: DPR capped at 1 — cuts pixel count by 4x on retina, marble is smooth enough
+    const dpr = 1;
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    gl.viewport(0, 0, canvas.width, canvas.height);
+}
+window.addEventListener('resize', resize);
+resize();
+
+const vs = `attribute vec2 p; void main(){gl_Position=vec4(p,0,1);}`;
+
+// FULL original shader — 4 octaves, 3 warp layers, dual pattern blend
+const fs = `
+precision highp float;
+uniform vec2 R;
+uniform float T;
+
+vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+vec4 perm(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+
+float noise(vec3 p){
+    vec3 a=floor(p);
+    vec3 d=p-a;
+    d=d*d*(3.0-2.0*d);
+    vec4 b=a.xxyy+vec4(0.0,1.0,0.0,1.0);
+    vec4 k1=perm(b.xyxy);
+    vec4 k2=perm(k1.xyxy+b.zzww);
+    vec4 c=k2+a.zzzz;
+    vec4 k3=perm(c);
+    vec4 k4=perm(c+1.0);
+    vec4 o1=fract(k3*(1.0/41.0));
+    vec4 o2=fract(k4*(1.0/41.0));
+    vec4 o3=o2*d.z+o1*(1.0-d.z);
+    vec2 o4=o3.yw*d.x+o3.xz*(1.0-d.x);
+    return o4.y*d.y+o4.x*(1.0-d.y);
+}
+
+float fbm(vec3 p){
+    float v=0.0;
+    float a=0.5;
+    vec3 shift=vec3(100.0);
+    for(int i=0;i<4;i++){
+        v+=a*noise(p);
+        p=p*2.0+shift;
+        a*=0.5;
+    }
+    return v;
+}
+
+void main(){
+    vec2 uv=gl_FragCoord.xy/R;
+    float asp=R.x/R.y;
+    
+    vec2 p=vec2(uv.x*asp, uv.y)*1.2;
+    float t=T*0.012;
+    
+    // Layer 1: base warp
+    float n1=fbm(vec3(p*0.8, t*0.5));
+    float n2=fbm(vec3(p*0.8+vec2(5.2,1.3), t*0.4));
+    vec2 q=vec2(n1, n2);
+    
+    // Layer 2: warp the warp
+    float n3=fbm(vec3(p+6.0*q+vec2(1.7,9.2), t*0.3));
+    float n4=fbm(vec3(p+6.0*q+vec2(8.3,2.8), t*0.35));
+    vec2 r=vec2(n3, n4);
+    
+    // Layer 3: triple warp
+    float n5=fbm(vec3(p+5.0*r+vec2(3.1,7.7), t*0.2));
+    float n6=fbm(vec3(p+5.0*r+vec2(6.4,4.1), t*0.25));
+    vec2 s=vec2(n5, n6);
+    
+    // Final marble
+    float f=fbm(vec3(p+6.0*s, t*0.15));
+    
+    // Secondary pattern
+    float f2=fbm(vec3(p*0.6+4.0*r+vec2(11.3,3.7), t*0.18));
+    
+    // Blend
+    float marble=f*0.65+f2*0.35;
+    
+    // High contrast
+    marble=marble*1.8-0.3;
+    marble=clamp(marble, 0.0, 1.0);
+    marble=smoothstep(0.0, 1.0, marble);
+    marble=smoothstep(0.05, 0.95, marble);
+    marble=smoothstep(0.02, 0.98, marble);
+    
+    // Color mapping
+    float v=marble;
+    vec3 color;
+    float blackPoint=0.02;
+    float whitePoint=0.9;
+    
+    if(v<0.15){
+        color=mix(vec3(blackPoint), vec3(0.06,0.058,0.055), v/0.15);
+    } else if(v<0.35){
+        color=mix(vec3(0.06,0.058,0.055), vec3(0.22,0.21,0.20), (v-0.15)/0.2);
+    } else if(v<0.55){
+        color=mix(vec3(0.22,0.21,0.20), vec3(0.5,0.48,0.46), (v-0.35)/0.2);
+    } else if(v<0.75){
+        color=mix(vec3(0.5,0.48,0.46), vec3(0.72,0.70,0.67), (v-0.55)/0.2);
+    } else {
+        color=mix(vec3(0.72,0.70,0.67), vec3(whitePoint,whitePoint*0.98,whitePoint*0.95), (v-0.75)/0.25);
+    }
+    
+    gl_FragColor=vec4(color,1.0);
+}
+`;
+
+function mkS(type, src){
+    const s=gl.createShader(type);
+    gl.shaderSource(s,src);
+    gl.compileShader(s);
+    if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));
+    return s;
+}
+const prog=gl.createProgram();
+gl.attachShader(prog,mkS(gl.VERTEX_SHADER,vs));
+gl.attachShader(prog,mkS(gl.FRAGMENT_SHADER,fs));
+gl.linkProgram(prog);
+if(!gl.getProgramParameter(prog,gl.LINK_STATUS))console.error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+
+const buf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+const aP=gl.getAttribLocation(prog,'p');
+gl.enableVertexAttribArray(aP);
+gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+
+const uR=gl.getUniformLocation(prog,'R');
+const uT=gl.getUniformLocation(prog,'T');
+let t0=Date.now();
+
+function render(){
+    const t=(Date.now()-t0)/1000;
+    gl.uniform2f(uR,canvas.width,canvas.height);
+    gl.uniform1f(uT,t);
+    gl.drawArrays(gl.TRIANGLES,0,6);
+    requestAnimationFrame(render);
+}
+render();
+
+function handleSubmit(){
+    const email=document.getElementById('emailInput').value;
+    if(!email||!email.includes('@')||!email.includes('.')){
+        const inp=document.getElementById('emailInput');
+        inp.style.borderColor='rgba(255,120,100,0.5)';
+        inp.style.transition='border-color 0.3s';
+        setTimeout(()=>{inp.style.borderColor='rgba(255,255,255,0.12)';},2000);
+        return;
+    }
+    const form=document.getElementById('waitlistForm');
+    const succ=document.getElementById('successMessage');
+    const note=document.getElementById('newsletterNote');
+    form.style.transition='opacity 0.6s,transform 0.6s';
+    form.style.opacity='0';form.style.transform='translateY(-10px)';
+    note.style.transition='opacity 0.4s';note.style.opacity='0';
+    setTimeout(()=>{form.style.display='none';note.style.display='none';succ.classList.add('visible');},600);
+    console.log('Waitlist signup:',email);
+}
+document.getElementById('emailInput').addEventListener('keypress',e=>{if(e.key==='Enter')handleSubmit();});
+</script>
+</body>
+</html>
