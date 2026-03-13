@@ -1,65 +1,47 @@
-import Image from "next/image";
+import MarbleBackground from "@/components/MarbleBackground";
+import WaitlistCTA from "@/components/WaitlistCTA";
+import Socials from "@/components/Socials";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <>
+      <MarbleBackground />
+
+      {/* Bottom fade overlay */}
+      <div className="fixed bottom-0 left-0 w-full h-[35%] z-[3] pointer-events-none bg-gradient-to-b from-transparent via-black/70 to-black/85" />
+
+      {/* Main content */}
+      <div className="fixed inset-0 z-10 flex flex-col items-center justify-center text-center px-8 py-16 pointer-events-none [background:radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0.3)_40%,transparent_70%)]">
+        <div className="pointer-events-auto flex flex-col items-center">
+          <h1 className="font-serif font-light text-[clamp(3.5rem,10vw,8.5rem)] tracking-tight leading-none text-[#f0eeea] mb-8 opacity-0 translate-y-[30px] animate-[fadeUp_0.9s_cubic-bezier(0.25,0.1,0.25,1)_0.4s_forwards] [text-shadow:0_4px_40px_rgba(0,0,0,0.6)]">
+            <em>Endless</em> Founders
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="font-sans font-light text-[clamp(0.65rem,1.4vw,0.8rem)] tracking-[0.4em] uppercase text-[#c5c3be] mb-10 opacity-0 translate-y-[20px] animate-[fadeUp_0.8s_cubic-bezier(0.25,0.1,0.25,1)_0.6s_forwards] [text-shadow:0_1px_12px_rgba(0,0,0,0.8)]">
+            A founder residency
           </p>
+
+          <WaitlistCTA />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Location label */}
+      <div className="fixed bottom-8 left-10 z-10 font-sans font-light text-[0.7rem] tracking-[0.06em] text-[#b0ada8] opacity-0 animate-[fadeIn_1s_ease_2s_forwards] [text-shadow:0_1px_8px_rgba(0,0,0,0.9)] max-sm:bottom-6 max-sm:left-6 max-sm:text-[0.6rem]">
+        Location TBD
+      </div>
+
+      {/* Bottom mark */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 opacity-0 animate-[fadeIn_1s_ease_2s_forwards] max-sm:hidden">
+        <span className="font-sans font-light text-[0.55rem] tracking-[0.3em] uppercase text-[#807d78] [text-shadow:0_1px_8px_rgba(0,0,0,0.9)]">
+          Endless Founders
+        </span>
+        <div className="w-[3px] h-[3px] rounded-full bg-[#807d78]" />
+        <span className="font-sans font-light text-[0.55rem] tracking-[0.3em] uppercase text-[#807d78] [text-shadow:0_1px_8px_rgba(0,0,0,0.9)]">
+          2026
+        </span>
+      </div>
+
+      <Socials />
+    </>
   );
 }

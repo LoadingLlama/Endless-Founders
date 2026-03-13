@@ -1,0 +1,152 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+const VERTEX_SHADER = `attribute vec2 p; void main(){gl_Position=vec4(p,0,1);}`;
+
+const FRAGMENT_SHADER = `
+precision highp float;
+uniform vec2 R;
+uniform float T;
+
+vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+vec4 perm(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+
+float noise(vec3 p){
+    vec3 a=floor(p);
+    vec3 d=p-a;
+    d=d*d*(3.0-2.0*d);
+    vec4 b=a.xxyy+vec4(0.0,1.0,0.0,1.0);
+    vec4 k1=perm(b.xyxy);
+    vec4 k2=perm(k1.xyxy+b.zzww);
+    vec4 c=k2+a.zzzz;
+    vec4 k3=perm(c);
+    vec4 k4=perm(c+1.0);
+    vec4 o1=fract(k3*(1.0/41.0));
+    vec4 o2=fract(k4*(1.0/41.0));
+    vec4 o3=o2*d.z+o1*(1.0-d.z);
+    vec2 o4=o3.yw*d.x+o3.xz*(1.0-d.x);
+    return o4.y*d.y+o4.x*(1.0-d.y);
+}
+
+float fbm(vec3 p){
+    float v=0.0;
+    float a=0.5;
+    vec3 shift=vec3(100.0);
+    for(int i=0;i<4;i++){
+        v+=a*noise(p);
+        p=p*2.0+shift;
+        a*=0.5;
+    }
+    return v;
+}
+
+void main(){
+    vec2 uv=gl_FragCoord.xy/R;
+    float asp=R.x/R.y;
+    vec2 p=vec2(uv.x*asp, uv.y)*1.2;
+    float t=T*0.012;
+    float n1=fbm(vec3(p*0.8, t*0.5));
+    float n2=fbm(vec3(p*0.8+vec2(5.2,1.3), t*0.4));
+    vec2 q=vec2(n1, n2);
+    float n3=fbm(vec3(p+6.0*q+vec2(1.7,9.2), t*0.3));
+    float n4=fbm(vec3(p+6.0*q+vec2(8.3,2.8), t*0.35));
+    vec2 r=vec2(n3, n4);
+    float n5=fbm(vec3(p+5.0*r+vec2(3.1,7.7), t*0.2));
+    float n6=fbm(vec3(p+5.0*r+vec2(6.4,4.1), t*0.25));
+    vec2 s=vec2(n5, n6);
+    float f=fbm(vec3(p+6.0*s, t*0.15));
+    float f2=fbm(vec3(p*0.6+4.0*r+vec2(11.3,3.7), t*0.18));
+    float marble=f*0.65+f2*0.35;
+    marble=marble*1.8-0.3;
+    marble=clamp(marble, 0.0, 1.0);
+    marble=smoothstep(0.0, 1.0, marble);
+    marble=smoothstep(0.05, 0.95, marble);
+    marble=smoothstep(0.02, 0.98, marble);
+    float v=marble;
+    vec3 color;
+    float blackPoint=0.02;
+    float whitePoint=0.9;
+    if(v<0.15){
+        color=mix(vec3(blackPoint), vec3(0.06,0.058,0.055), v/0.15);
+    } else if(v<0.35){
+        color=mix(vec3(0.06,0.058,0.055), vec3(0.22,0.21,0.20), (v-0.15)/0.2);
+    } else if(v<0.55){
+        color=mix(vec3(0.22,0.21,0.20), vec3(0.5,0.48,0.46), (v-0.35)/0.2);
+    } else if(v<0.75){
+        color=mix(vec3(0.5,0.48,0.46), vec3(0.72,0.70,0.67), (v-0.55)/0.2);
+    } else {
+        color=mix(vec3(0.72,0.70,0.67), vec3(whitePoint,whitePoint*0.98,whitePoint*0.95), (v-0.75)/0.25);
+    }
+    gl_FragColor=vec4(color,1.0);
+}
+`;
+
+export default function MarbleBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const gl = canvas.getContext("webgl", { alpha: false });
+    if (!gl) return;
+
+    function resize() {
+      if (!canvas || !gl) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    function makeShader(type: number, src: string) {
+      const s = gl!.createShader(type)!;
+      gl!.shaderSource(s, src);
+      gl!.compileShader(s);
+      return s;
+    }
+
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, makeShader(gl.VERTEX_SHADER, VERTEX_SHADER));
+    gl.attachShader(prog, makeShader(gl.FRAGMENT_SHADER, FRAGMENT_SHADER));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+    const aP = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(aP);
+    gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 0, 0);
+
+    const uR = gl.getUniformLocation(prog, "R");
+    const uT = gl.getUniformLocation(prog, "T");
+    const t0 = Date.now();
+    let animId: number;
+
+    function render() {
+      const t = (Date.now() - t0) / 1000;
+      gl!.uniform2f(uR, canvas!.width, canvas!.height);
+      gl!.uniform1f(uT, t);
+      gl!.drawArrays(gl!.TRIANGLES, 0, 6);
+      animId = requestAnimationFrame(render);
+    }
+
+    render();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full z-0"
+    />
+  );
+}
