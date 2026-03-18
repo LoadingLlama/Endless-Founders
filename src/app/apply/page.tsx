@@ -163,7 +163,7 @@ export default function ApplyPage() {
               <F label="linkedin" required invalid={isInvalid("linkedin")}><In value={form.linkedin as string} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/in/..." invalid={isInvalid("linkedin")} /></F>
               <F label="x / twitter"><In value={form.twitter as string} onChange={(v) => set("twitter", v)} placeholder="https://x.com/..." /></F>
               <F label="what are your 2-3 most important accomplishments over the past 3 years?" required invalid={isInvalid("accomplishments")}>
-                <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} maxWords={200} />
+                <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} maxWords={100} />
               </F>
               <F label="what's your superpower? what skills do you bring?" required invalid={isInvalid("skills")}>
                 <Ta value={form.skills as string} onChange={(v) => set("skills", v)} placeholder="e.g. full-stack engineer, designer, sales, domain expertise" invalid={isInvalid("skills")} />
@@ -333,18 +333,18 @@ function In({ value, onChange, placeholder, type = "text", maxLength, invalid }:
   );
 }
 
-function Ta({ value, onChange, placeholder, invalid, maxWords = 150 }: {
+function Ta({ value, onChange, placeholder, invalid, maxWords = 100 }: {
   value?: string; onChange: (v: string) => void; placeholder?: string; invalid?: boolean; maxWords?: number;
 }) {
   const wordCount = (value || "").trim().split(/\s+/).filter(Boolean).length;
   const over = wordCount > maxWords;
   return (
-    <div>
+    <div className="relative">
       <textarea value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={4}
-        className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.04] rounded-xl outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 border ${
+        className={`w-full px-4 py-3 pb-7 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.04] rounded-xl outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 max-sm:pb-7 border ${
           invalid ? "border-red-500/60" : over ? "border-amber-500/50" : "border-white/[0.1] focus:border-white/[0.25]"
         }`} />
-      <p className={`mt-1 font-sans text-[0.65rem] ${over ? "text-amber-400/70" : "text-[#807d78]/50"}`}>{wordCount}/{maxWords} words</p>
+      <span className={`absolute bottom-2.5 right-3.5 font-sans text-[0.6rem] pointer-events-none ${over ? "text-amber-400/70" : "text-[#807d78]/40"}`}>{wordCount}/{maxWords}</span>
     </div>
   );
 }

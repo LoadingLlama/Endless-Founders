@@ -18,7 +18,7 @@ export default function Home() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative h-dvh min-h-[600px] overflow-hidden max-sm:min-h-0">
+      <section className="relative h-dvh overflow-hidden max-sm:h-svh">
         <MarbleBackground />
 
         {/* Bottom fade — smooth to black so it blends into next section */}
@@ -51,7 +51,7 @@ export default function Home() {
         </div>
 
         {/* Bottom bar: location left, socials right */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-end justify-between px-10 pb-8 opacity-0 animate-[fadeIn_0.5s_ease_0.7s_forwards] max-sm:px-5 max-sm:pb-[calc(env(safe-area-inset-bottom,0px)+1.5rem)]">
+        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between px-10 pb-8 opacity-0 animate-[fadeIn_0.5s_ease_0.7s_forwards] max-sm:px-5 max-sm:pb-5">
           {/* Location */}
           <div className="font-sans font-light text-[0.85rem] tracking-[0.02em] text-[#d5d3ce] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)] max-sm:text-[0.75rem]">
             location tbd
