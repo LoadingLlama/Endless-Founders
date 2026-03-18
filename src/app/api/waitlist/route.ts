@@ -13,12 +13,30 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
 
-  const { error } = await supabase
-    .from("waitlist")
-    .upsert({ email: email.toLowerCase() }, { onConflict: "email" });
+  const normalizedEmail = email.toLowerCase();
 
-  if (error) {
-    console.error("waitlist insert error:", error.message);
+  const { data: existing } = await supabase
+    .from("waitlist")
+    .select("email")
+    .eq("email", normalizedEmail)
+    .single();
+
+  if (existing) {
+    return NextResponse.json(
+      { error: "This email is already on the waitlist." },
+      { status: 409 }
+    );
+  }
+
+  const { error: insertError } = await supabase
+    .from("waitlist")
+    .insert({ email: normalizedEmail });
+
+  if (insertError) {
+    console.error("waitlist insert error:", {
+      message: insertError.message,
+      email: normalizedEmail,
+    });
     return NextResponse.json({ error: "Failed to join waitlist" }, { status: 500 });
   }
 

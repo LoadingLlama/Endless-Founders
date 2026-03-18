@@ -58,31 +58,37 @@ void main(){
     float f=fbm(vec3(p+6.0*s, t*0.15));
     float f2=fbm(vec3(p*0.6+4.0*r+vec2(11.3,3.7), t*0.18));
     float marble=f*0.65+f2*0.35;
-    marble=marble*1.8-0.3;
+    marble=marble*1.6-0.35;
     marble=clamp(marble, 0.0, 1.0);
     marble=smoothstep(0.0, 1.0, marble);
+    marble=smoothstep(0.08, 0.92, marble);
     marble=smoothstep(0.05, 0.95, marble);
-    marble=smoothstep(0.02, 0.98, marble);
     float v=marble;
     vec3 color;
-    float blackPoint=0.02;
-    float whitePoint=0.9;
+    float blackPoint=0.015;
+    float whitePoint=0.55;
     if(v<0.15){
-        color=mix(vec3(blackPoint), vec3(0.06,0.058,0.055), v/0.15);
+        color=mix(vec3(blackPoint), vec3(0.04,0.038,0.036), v/0.15);
     } else if(v<0.35){
-        color=mix(vec3(0.06,0.058,0.055), vec3(0.22,0.21,0.20), (v-0.15)/0.2);
+        color=mix(vec3(0.04,0.038,0.036), vec3(0.13,0.125,0.12), (v-0.15)/0.2);
     } else if(v<0.55){
-        color=mix(vec3(0.22,0.21,0.20), vec3(0.5,0.48,0.46), (v-0.35)/0.2);
+        color=mix(vec3(0.13,0.125,0.12), vec3(0.28,0.27,0.26), (v-0.35)/0.2);
     } else if(v<0.75){
-        color=mix(vec3(0.5,0.48,0.46), vec3(0.72,0.70,0.67), (v-0.55)/0.2);
+        color=mix(vec3(0.28,0.27,0.26), vec3(0.42,0.40,0.38), (v-0.55)/0.2);
     } else {
-        color=mix(vec3(0.72,0.70,0.67), vec3(whitePoint,whitePoint*0.98,whitePoint*0.95), (v-0.75)/0.25);
+        color=mix(vec3(0.42,0.40,0.38), vec3(whitePoint,whitePoint*0.98,whitePoint*0.95), (v-0.75)/0.25);
     }
+    // Center vignette — darken edges, keep center slightly brighter
+    vec2 vc=uv-0.5;
+    float vign=1.0-dot(vc,vc)*1.8;
+    vign=clamp(vign,0.0,1.0);
+    vign=smoothstep(0.0,1.0,vign);
+    color*=mix(0.5,1.0,vign);
     gl_FragColor=vec4(color,1.0);
 }
 `;
 
-export default function MarbleBackground() {
+export default function MarbleBackground({ className = "fixed top-0 left-0 w-full h-full z-0" }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -146,7 +152,7 @@ export default function MarbleBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full z-0"
+      className={className}
     />
   );
 }
