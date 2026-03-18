@@ -11,7 +11,7 @@ import { useState } from "react";
 const faqs = [
   {
     q: "who is this for?",
-    a: "early-stage founders — solo or with a co-founder — who are actively building a product or company. we're looking for people with strong conviction and a bias toward action.",
+    a: "we're open to anyone — whether you have an idea or are actively working on your startup. early-stage founders, solo or with a co-founder, who have strong conviction and a bias toward action.",
   },
   {
     q: "how long is the residency?",
@@ -46,13 +46,13 @@ function FAQItem({ q, a }: { q: string; a: string }) {
     <div className="border-t border-white/[0.08]">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-6 text-left cursor-pointer group"
+        className="w-full flex items-center justify-between py-6 text-left cursor-pointer group min-h-[44px] max-sm:py-5"
       >
-        <span className="font-sans font-light text-[1rem] text-[#f0eeea] tracking-wide group-hover:text-white transition-colors pr-8">
+        <span className="font-sans font-light text-[1rem] text-[#f0eeea] tracking-wide group-hover:text-white transition-colors pr-8 max-sm:text-[0.9rem] max-sm:pr-4">
           {q}
         </span>
         <span
-          className={`font-sans font-light text-[1.2rem] text-[#807d78] transition-transform duration-300 shrink-0 ${
+          className={`font-sans font-light text-[1.2rem] text-[#807d78] transition-transform duration-300 shrink-0 w-[44px] h-[44px] flex items-center justify-center ${
             open ? "rotate-45" : ""
           }`}
         >

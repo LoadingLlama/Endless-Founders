@@ -28,10 +28,8 @@ export default function ApplySection() {
 
           <div className="reveal reveal-delay-2">
             <a
-              href="https://www.livetheresidency.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-8 py-3 font-sans font-semibold text-[0.9rem] tracking-[0.02em] text-[#0a0a0a] bg-white rounded-full transition-all duration-300 hover:bg-white/90 active:scale-[0.97]"
+              href="/apply"
+              className="inline-flex items-center px-8 py-3 font-sans font-semibold text-[0.9rem] tracking-[0.02em] text-[#0a0a0a] bg-white rounded-full transition-all duration-300 hover:bg-white/90 active:scale-[0.97] min-h-[44px] max-sm:px-7 max-sm:py-3"
             >
               apply now
             </a>

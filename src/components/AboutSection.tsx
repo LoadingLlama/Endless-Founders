@@ -32,7 +32,7 @@ export default function AboutSection() {
 
         {/* Divider */}
         <div className="reveal reveal-delay-4 mt-20 pt-16 border-t border-white/[0.08]">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 max-sm:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 max-sm:gap-6">
             {[
               { label: "duration", value: "6 weeks" },
               { label: "cohort size", value: "12–16 founders" },
