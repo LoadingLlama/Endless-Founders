@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 /**
  * Application form — same form for everyone.
@@ -9,8 +9,10 @@ import { useState, useRef, useEffect } from "react";
  */
 
 type FormData = Record<string, string | boolean | null>;
+type Cofounder = { first_name: string; last_name: string; email: string; accomplishments: string };
 
 const STAGES = ["i have an idea", "mvp built", "users but pre-revenue", "revenue"] as const;
+const emptyCofounder = (): Cofounder => ({ first_name: "", last_name: "", email: "", accomplishments: "" });
 
 const sections = [
   "your experience",
@@ -19,35 +21,88 @@ const sections = [
   "how you found us",
 ];
 
+const HOW_HEARD_OPTIONS = ["instagram", "twitter", "linkedin", "email", "word of mouth", "other"] as const;
+
+const STORAGE_KEY = "ef_application_form";
+const STORAGE_KEY_COFOUNDERS = "ef_application_cofounders";
+
+/**
+ * Loads saved form data from localStorage.
+ * Returns empty object/default if nothing saved or parse fails.
+ */
+function loadSaved<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export default function ApplyPage() {
   const [activeSection, setActiveSection] = useState("about you");
-  const [form, setForm] = useState<FormData>({});
+  const [form, setForm] = useState<FormData>(() => loadSaved<FormData>(STORAGE_KEY, {}));
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
-  const [saveStatus, setSaveStatus] = useState<"" | "saving" | "saved">("");
   const [touched, setTouched] = useState<Set<string>>(new Set());
+  const [cofounders, setCofounders] = useState<Cofounder[]>(() => loadSaved<Cofounder[]>(STORAGE_KEY_COFOUNDERS, [emptyCofounder()]));
+  const [saveLabel, setSaveLabel] = useState<"idle" | "saving" | "saved">("idle");
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const isActive = form.stage !== undefined && form.stage !== "i have an idea";
-
-  // Load from localStorage on mount
+  // Auto-save form to localStorage on every change (skip initial render)
   useEffect(() => {
-    const saved = localStorage.getItem("ef-application");
-    if (saved) { try { setForm(JSON.parse(saved)); } catch {} }
-  }, []);
-
-  // Autosave to localStorage on change
-  useEffect(() => {
-    if (Object.keys(form).length === 0) return;
-    setSaveStatus("saving");
-    const t = setTimeout(() => {
-      localStorage.setItem("ef-application", JSON.stringify(form));
-      setSaveStatus("saved");
-      setTimeout(() => setSaveStatus(""), 2000);
-    }, 500);
-    return () => clearTimeout(t);
+    if (isFirstRender.current) return;
+    setSaveLabel("saving");
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(form)); } catch { /* storage full — silent */ }
+      setSaveLabel("saved");
+    }, 400);
   }, [form]);
+
+  useEffect(() => {
+    if (isFirstRender.current) return;
+    setSaveLabel("saving");
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      try { localStorage.setItem(STORAGE_KEY_COFOUNDERS, JSON.stringify(cofounders)); } catch { /* storage full — silent */ }
+      setSaveLabel("saved");
+    }, 400);
+  }, [cofounders]);
+
+  useEffect(() => { isFirstRender.current = false; }, []);
+
+  // Save before user leaves (tab close, navigate away)
+  const saveToStorage = useCallback(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+      localStorage.setItem(STORAGE_KEY_COFOUNDERS, JSON.stringify(cofounders));
+    } catch { /* silent */ }
+  }, [form, cofounders]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", saveToStorage);
+    document.addEventListener("visibilitychange", saveToStorage);
+    return () => {
+      window.removeEventListener("beforeunload", saveToStorage);
+      document.removeEventListener("visibilitychange", saveToStorage);
+    };
+  }, [saveToStorage]);
+
+  // Clear saved data after successful submission
+  function clearSavedData() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY_COFOUNDERS);
+    } catch { /* silent */ }
+  }
+
+  const isActive = form.stage !== undefined && form.stage !== "i have an idea";
 
   function isInvalid(key: string) {
     if (!touched.has(key)) return false;
@@ -59,6 +114,18 @@ export default function ApplyPage() {
 
   function set(key: string, value: string | boolean | null) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function updateCofounder(idx: number, field: keyof Cofounder, value: string) {
+    setCofounders((prev) => prev.map((c, i) => i === idx ? { ...c, [field]: value } : c));
+  }
+
+  function addCofounder() {
+    setCofounders((prev) => [...prev, emptyCofounder()]);
+  }
+
+  function removeCofounder(idx: number) {
+    setCofounders((prev) => prev.filter((_, i) => i !== idx));
   }
 
   function scrollToSection(id: string) {
@@ -78,36 +145,53 @@ export default function ApplyPage() {
     { key: "linkedin", label: "linkedin", section: "your experience" },
     { key: "school", label: "school", section: "your experience" },
     { key: "major", label: "major", section: "your experience" },
-    { key: "has_cofounder", label: "cofounder", section: "your experience" },
     { key: "one_belief", label: "one thing only you believe", section: "your experience" },
+    { key: "has_cofounder", label: "has cofounder", section: "your experience" },
     { key: "looking_for_cofounder", label: "looking for cofounder", section: "your experience" },
     { key: "accomplishments", label: "accomplishments", section: "your experience" },
     { key: "skills", label: "skills", section: "your experience" },
     { key: "stage", label: "stage", section: "your idea" },
+    { key: "vision", label: "vision", section: "your idea" },
+    { key: "building", label: "what you're building", section: "your idea" },
     { key: "problem", label: "problem you're solving", section: "your idea" },
-    { key: "building", label: "your solution", section: "your idea" },
+    { key: "why_this_idea", label: "why this idea", section: "your idea" },
     { key: "world_needs", label: "how world needs this", section: "your idea" },
     { key: "why_you", label: "why you're the best person", section: "your idea" },
     { key: "target_user", label: "target user", section: "your idea" },
-    { key: "talked_to_users", label: "talked to users", section: "your idea" },
-    { key: "why_ef", label: "why endless founders", section: "your idea" },
-    { key: "has_investment", label: "taken investment", section: "your idea" },
     { key: "has_legal_entity", label: "legal entity", section: "your idea" },
+    { key: "has_investment", label: "taken investment", section: "your idea" },
     { key: "fundraising", label: "fundraising", section: "your idea" },
-    { key: "how_heard", label: "how you heard about us", section: "your commitment" },
-    { key: "inspired_by", label: "who inspired you", section: "your commitment" },
     { key: "can_commit_6_weeks", label: "6-week commitment", section: "your commitment" },
     { key: "six_week_focus", label: "6-week focus", section: "your commitment" },
     { key: "other_commitments", label: "other summer plans", section: "your commitment" },
+    { key: "how_heard", label: "how you heard about us", section: "how you found us" },
   ];
 
   function getMissingFields() {
-    return requiredFields.filter(({ key }) => {
+    const missing = requiredFields.filter(({ key }) => {
       const val = form[key];
       if (val === null || val === undefined) return true;
       if (typeof val === "string" && val.trim() === "") return true;
       return false;
     });
+    // Validate cofounder fields when has_cofounder is true
+    if (form.has_cofounder === true) {
+      for (const c of cofounders) {
+        if (!c.first_name.trim() || !c.last_name.trim() || !c.email.trim() || !c.accomplishments.trim()) {
+          missing.push({ key: "cofounders", label: "cofounder details", section: "your experience" });
+          break;
+        }
+      }
+      const howMet = form.cofounder_how_met;
+      if (!howMet || (typeof howMet === "string" && !howMet.trim())) {
+        missing.push({ key: "cofounder_how_met", label: "how you met cofounders", section: "your experience" });
+      }
+      const responsibilities = form.cofounder_responsibilities;
+      if (!responsibilities || (typeof responsibilities === "string" && !responsibilities.trim())) {
+        missing.push({ key: "cofounder_responsibilities", label: "cofounder responsibilities", section: "your experience" });
+      }
+    }
+    return missing;
   }
 
   function handleSubmitClick() {
@@ -116,10 +200,7 @@ export default function ApplyPage() {
     if (missing.length > 0) {
       // Mark all required fields as touched so they show red outlines
       setTouched(new Set(requiredFields.map((f) => f.key)));
-      // Scroll to the first missing field's section
-      const sectionId = missing[0].section.replace(/\s/g, "-");
-      const el = document.getElementById(sectionId);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToSection(missing[0].section);
       return;
     }
     setShowConfirm(true);
@@ -132,10 +213,14 @@ export default function ApplyPage() {
       const res = await fetch("/api/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          ...(form.has_cofounder === true ? { cofounders: JSON.stringify(cofounders) } : {}),
+        }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "something went wrong"); setSubmitting(false); return; }
+      clearSavedData();
       setSubmitted(true);
     } catch {
       setError("failed to submit. please try again.");
@@ -165,11 +250,14 @@ export default function ApplyPage() {
         <nav className="flex flex-col gap-0.5">
           {sections.map((s) => (
             <button key={s} onClick={() => scrollToSection(s)}
-              className={`text-left font-sans text-[0.85rem] px-0 py-2 transition-colors ${
+              className={`text-left font-sans text-[0.8rem] px-0 py-2 transition-colors ${
                 activeSection === s ? "font-semibold text-[#f0eeea]" : "font-light text-[#807d78] hover:text-[#f0eeea]"
               }`}>{s}</button>
           ))}
         </nav>
+        <p className={`mt-4 font-sans font-light text-[0.7rem] text-[#807d78] transition-opacity duration-300 ${saveLabel === "saved" ? "opacity-100" : "opacity-0"}`}>
+          saved
+        </p>
       </aside>
 
       {/* Right side — scrollable */}
@@ -179,12 +267,12 @@ export default function ApplyPage() {
               <a href="/" className="font-serif font-light text-[1rem] text-[#f0eeea] inline-flex items-center min-h-[44px]">endless founders</a>
             </div>
 
-            <h1 className="font-serif font-light text-[2.2rem] text-[#f0eeea] tracking-[-0.02em] leading-none mb-1">endless founders application</h1>
-            <p className="font-sans font-light text-[0.85rem] text-[#807d78] mb-3">early june to mid august · cohort I</p>
-            <p className="font-sans font-light text-[0.75rem] text-[#807d78]/60 mb-12">note: please don&apos;t include links except where we specifically ask. part of what we&apos;re evaluating is how well you can explain your work without leaning on external references.</p>
+            <h1 className="font-serif font-light text-[2.2rem] text-[#f0eeea] tracking-[-0.02em] leading-none mb-1 max-sm:text-[1.6rem]">endless founder application</h1>
+            <p className="font-sans font-light text-[0.85rem] text-[#b5b3ae] mb-2">early june to mid august · cohort I</p>
+            <p className="font-sans font-light text-[0.78rem] text-[#b5b3ae] mb-12">note: please don&apos;t include links except where we specifically ask. part of what we&apos;re evaluating is how well you can explain your work without leaning on external references.</p>
 
             {error && (
-              <div className="mb-6 px-4 py-3 bg-red-900/20 border border-red-500/30 rounded-lg font-sans text-[0.85rem] text-red-400 hidden">{error}</div>
+              <div className="mb-6 px-4 py-3 bg-red-900/20 border border-red-500/30 rounded-xl font-sans text-[0.85rem] text-red-400 hidden">{error}</div>
             )}
 
             {/* ── 1. YOUR EXPERIENCE ── */}
@@ -213,28 +301,87 @@ export default function ApplyPage() {
               <F label="do you have a cofounder?" required invalid={isInvalid("has_cofounder")}>
                 <Toggle value={form.has_cofounder as boolean | null} onChange={(v) => set("has_cofounder", v)} invalid={isInvalid("has_cofounder")} />
               </F>
-              <F label="are you looking for a cofounder?" required invalid={isInvalid("looking_for_cofounder")}>
-                <Toggle value={form.looking_for_cofounder as boolean | null} onChange={(v) => set("looking_for_cofounder", v)} invalid={isInvalid("looking_for_cofounder")} />
-              </F>
+
+              {form.has_cofounder === true && (
+                <div className="border-l-2 border-white/[0.1] pl-6 flex flex-col gap-6">
+                  <F label="cofounders" required invalid={isInvalid("cofounders")}>
+                    <div className="flex flex-col gap-4">
+                      {cofounders.map((c, i) => (
+                        <div key={i} className="border border-white/[0.1] rounded-xl p-5">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="font-sans font-light text-[0.75rem] text-[#807d78]">cofounder {i + 1}</span>
+                            {i > 0 && (
+                              <button onClick={() => removeCofounder(i)} className="font-sans text-[0.75rem] text-red-400 hover:text-red-300 transition-colors">remove</button>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 mb-4 max-sm:grid-cols-1">
+                            <div>
+                              <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">first name <span className="text-red-400 ml-1">*</span></label>
+                              <input value={c.first_name} onChange={(e) => updateCofounder(i, "first_name", e.target.value)}
+                                className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="type your answer here" />
+                            </div>
+                            <div>
+                              <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">last name <span className="text-red-400 ml-1">*</span></label>
+                              <input value={c.last_name} onChange={(e) => updateCofounder(i, "last_name", e.target.value)}
+                                className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="type your answer here" />
+                            </div>
+                          </div>
+                          <div className="mb-4">
+                            <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">email <span className="text-red-400 ml-1">*</span></label>
+                            <input type="email" value={c.email} onChange={(e) => updateCofounder(i, "email", e.target.value)}
+                              className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="cofounder@example.com" />
+                          </div>
+                          <div>
+                            <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">what are 2 things they are most proud of? (this is not the time to be humble, plz brag!) <span className="text-red-400 ml-1">*</span></label>
+                            <textarea value={c.accomplishments} onChange={(e) => { if (e.target.value.length <= 350) updateCofounder(i, "accomplishments", e.target.value); }} rows={4}
+                              className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors resize-y placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="type your answer here" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={addCofounder} className="font-sans text-[0.8rem] text-[#807d78] hover:text-[#f0eeea] transition-colors mt-1">+ add cofounder</button>
+                  </F>
+
+                  <F label="how long have you known each other and how did you meet?" required invalid={isInvalid("cofounder_how_met")}>
+                    <Ta value={form.cofounder_how_met as string} onChange={(v) => set("cofounder_how_met", v)} invalid={isInvalid("cofounder_how_met")} />
+                  </F>
+
+                  <F label="how do you split responsibilities?" required invalid={isInvalid("cofounder_responsibilities")}>
+                    <Ta value={form.cofounder_responsibilities as string} onChange={(v) => set("cofounder_responsibilities", v)} invalid={isInvalid("cofounder_responsibilities")} />
+                  </F>
+                </div>
+              )}
+
+              {form.has_cofounder === false && (
+                <F label="are you looking for a cofounder?" required invalid={isInvalid("looking_for_cofounder")}>
+                  <Toggle value={form.looking_for_cofounder as boolean | null} onChange={(v) => set("looking_for_cofounder", v)} invalid={isInvalid("looking_for_cofounder")} />
+                </F>
+              )}
             </Sec>
 
             {/* ── 2. YOUR IDEA ── */}
             <Sec id="your-idea" title="your idea" onVisible={() => setActiveSection("your idea")}>
               <F label="where are you at right now?" required invalid={isInvalid("stage")}>
-                <div className={`flex flex-wrap gap-2 ${isInvalid("stage") ? "ring-1 ring-red-500/60 rounded-lg p-2 -m-2" : ""}`}>
+                <div className={`flex flex-wrap gap-2 ${isInvalid("stage") ? "ring-1 ring-red-500/60 rounded-xl p-2 -m-2" : ""}`}>
                   {STAGES.map((s) => (
                     <button key={s} onClick={() => set("stage", s)}
                       className={`font-sans text-[0.8rem] px-4 py-2 rounded-lg border transition-colors min-h-[44px] max-sm:flex-1 max-sm:text-[0.78rem] ${
-                        form.stage === s ? "bg-white text-black border-white" : "bg-transparent text-[#807d78] border-white/[0.1] hover:border-white/[0.25]"
+                        form.stage === s ? "bg-white text-black border-white" : "bg-white/[0.08] text-white border-white/[0.15] hover:border-white/[0.3]"
                       }`}>{s}</button>
                   ))}
                 </div>
               </F>
-              <F label="what's the ultimate vision you're building towards? 50 characters or less" required invalid={isInvalid("problem")}>
-                <In value={form.problem as string} onChange={(v) => set("problem", v)} placeholder="e.g making life multiplanetary" invalid={isInvalid("problem")} maxLength={50} />
+              <F label="what's the ultimate vision you're building towards? 50 characters or less" required invalid={isInvalid("vision")}>
+                <In value={form.vision as string} onChange={(v) => set("vision", v)} placeholder="e.g making life multiplanetary" invalid={isInvalid("vision")} maxLength={50} />
               </F>
               <F label="describe what you're building or investigating in 50 characters or less" required invalid={isInvalid("building")}>
                 <In value={form.building as string} onChange={(v) => set("building", v)} placeholder="e.g. ai tool that automates student workflows" invalid={isInvalid("building")} maxLength={50} />
+              </F>
+              <F label="what problem are you solving?" required invalid={isInvalid("problem")}>
+                <Ta value={form.problem as string} onChange={(v) => set("problem", v)} placeholder="what pain point or gap does your product address?" invalid={isInvalid("problem")} />
+              </F>
+              <F label="why did you pick this idea to work on?" required invalid={isInvalid("why_this_idea")}>
+                <Ta value={form.why_this_idea as string} onChange={(v) => set("why_this_idea", v)} placeholder="what drew you to this problem specifically?" invalid={isInvalid("why_this_idea")} />
               </F>
               <F label="how do you know the world needs what you're making?" required invalid={isInvalid("world_needs")}>
                 <Ta value={form.world_needs as string} onChange={(v) => set("world_needs", v)} placeholder="what have you seen, heard, or experienced that tells you this matters?" invalid={isInvalid("world_needs")} />
@@ -243,11 +390,27 @@ export default function ApplyPage() {
                 <Ta value={form.why_you as string} onChange={(v) => set("why_you", v)} placeholder="what unique experience, insight, or skill makes you the right founder for this?" invalid={isInvalid("why_you")} />
               </F>
               <F label="who is this for?" required invalid={isInvalid("target_user")}>
-                <In value={form.target_user as string} onChange={(v) => set("target_user", v)} placeholder="e.g. freelance designers, college students" invalid={isInvalid("target_user")} />
+                <In value={form.target_user as string} onChange={(v) => set("target_user", v)} placeholder="e.g. college students juggling 3+ platforms for assignments, or freelance designers billing $5k+/mo" invalid={isInvalid("target_user")} />
               </F>
-              <F label="have you talked to potential users?" required invalid={isInvalid("talked_to_users")}>
-                <Toggle value={form.talked_to_users as boolean | null} onChange={(v) => set("talked_to_users", v)} invalid={isInvalid("talked_to_users")} />
+              <F label="have you talked to potential users?">
+                <Toggle value={form.talked_to_users as boolean | null} onChange={(v) => set("talked_to_users", v)} />
               </F>
+              <F label="do you have users?">
+                <Toggle value={form.has_users as boolean | null} onChange={(v) => set("has_users", v)} />
+              </F>
+              {form.has_users === true && (
+                <F label="how many users?">
+                  <In value={form.user_count as string} onChange={(v) => set("user_count", v)} placeholder="e.g. 50, 500, 10k" />
+                </F>
+              )}
+              <F label="do you have revenue?">
+                <Toggle value={form.has_revenue as boolean | null} onChange={(v) => set("has_revenue", v)} />
+              </F>
+              {form.has_revenue === true && (
+                <F label="how much revenue?">
+                  <In value={form.revenue_amount as string} onChange={(v) => set("revenue_amount", v)} placeholder="e.g. $1k/mo, $10k total" />
+                </F>
+              )}
               <F label="have you formed any legal entity yet?" required invalid={isInvalid("has_legal_entity")}>
                 <p className="font-sans font-light text-[0.7rem] text-[#807d78] mb-2">this may be in the united states or another country.</p>
                 <Toggle value={form.has_legal_entity as boolean | null} onChange={(v) => set("has_legal_entity", v)} invalid={isInvalid("has_legal_entity")} />
@@ -255,8 +418,21 @@ export default function ApplyPage() {
               <F label="have you taken any investment?" required invalid={isInvalid("has_investment")}>
                 <Toggle value={form.has_investment as boolean | null} onChange={(v) => set("has_investment", v)} invalid={isInvalid("has_investment")} />
               </F>
+              {form.has_investment === true && (
+                <>
+                  <F label="funding details">
+                    <In value={form.funding_details as string} onChange={(v) => set("funding_details", v)} placeholder="e.g. pre-seed from angel investors" />
+                  </F>
+                  <F label="how much have you raised?">
+                    <In value={form.funding_amount as string} onChange={(v) => set("funding_amount", v)} placeholder="e.g. $50k, $200k" />
+                  </F>
+                </>
+              )}
               <F label="are you currently fundraising?" required invalid={isInvalid("fundraising")}>
                 <Toggle value={form.fundraising as boolean | null} onChange={(v) => set("fundraising", v)} invalid={isInvalid("fundraising")} />
+              </F>
+              <F label="how long have you been working on this?">
+                <In value={form.time_working as string} onChange={(v) => set("time_working", v)} placeholder="e.g. 3 months, 1 year" />
               </F>
               <F label="link to product, demo, or github">
                 <In value={form.product_link as string} onChange={(v) => set("product_link", v)} placeholder="https://... (skip if n/a)" />
@@ -268,6 +444,9 @@ export default function ApplyPage() {
               <F label="can you commit to the full 6 weeks? (early june – mid august)" required invalid={isInvalid("can_commit_6_weeks")}>
                 <Toggle value={form.can_commit_6_weeks as boolean | null} onChange={(v) => set("can_commit_6_weeks", v)} invalid={isInvalid("can_commit_6_weeks")} />
               </F>
+              <F label="are you working on this full-time?" required={isActive}>
+                <Toggle value={form.full_time as boolean | null} onChange={(v) => set("full_time", v)} />
+              </F>
               <F label="are you doing anything else this summer? (e.g. internship, job)" required invalid={isInvalid("other_commitments")}>
                 <Ta value={form.other_commitments as string} onChange={(v) => set("other_commitments", v)} placeholder="e.g. no — this is my full focus / yes, part-time internship at X" invalid={isInvalid("other_commitments")} />
               </F>
@@ -278,37 +457,25 @@ export default function ApplyPage() {
 
             {/* ── 4. HOW YOU FOUND US ── */}
             <Sec id="how-you-found-us" title="how you found us" onVisible={() => setActiveSection("how you found us")}>
-              <F label="how did you hear about endless founders?" required invalid={isInvalid("how_heard")}>
+              <F label="how did you hear about the residency?" required invalid={isInvalid("how_heard")}>
                 <select value={(form.how_heard as string) || ""} onChange={(e) => set("how_heard", e.target.value)}
-                  className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.08] rounded-lg outline-none transition-colors appearance-none cursor-pointer max-sm:text-[1rem] border ${
+                  className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none transition-colors appearance-none max-sm:text-[1rem] max-sm:py-3.5 border ${
                     isInvalid("how_heard") ? "border-red-500/60" : "border-white/[0.1] focus:border-white/[0.25]"
-                  }`}>
-                  <option value="" className="bg-[#1a1a1a]">select</option>
-                  <option value="instagram" className="bg-[#1a1a1a]">instagram</option>
-                  <option value="twitter" className="bg-[#1a1a1a]">twitter</option>
-                  <option value="linkedin" className="bg-[#1a1a1a]">linkedin</option>
-                  <option value="email" className="bg-[#1a1a1a]">email</option>
-                  <option value="word of mouth" className="bg-[#1a1a1a]">word of mouth</option>
-                  <option value="other" className="bg-[#1a1a1a]">other</option>
+                  }`}
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23807d78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" }}>
+                  <option value="" disabled>select</option>
+                  {HOW_HEARD_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
-              </F>
-              <F label="who or what inspired you to apply?" required invalid={isInvalid("inspired_by")}>
-                <Ta value={form.inspired_by as string} onChange={(v) => set("inspired_by", v)} invalid={isInvalid("inspired_by")} />
               </F>
               <F label="anything else?">
                 <Ta value={form.anything_else as string} onChange={(v) => set("anything_else", v)} maxChars={2000} />
               </F>
             </Sec>
 
-            {/* Save status */}
-            {saveStatus && (
-              <p className={`text-center font-sans text-[0.7rem] mb-6 transition-opacity duration-500 ${saveStatus === "saved" ? "text-[#807d78]/60" : "text-[#807d78]/30"}`}>
-                {saveStatus === "saving" ? "saving..." : "saved"}
-              </p>
-            )}
-
             {/* Submit */}
-            <div className="mt-10 mb-20 flex flex-col items-center gap-4">
+            <div className="mt-16 mb-20 flex flex-col items-center gap-4">
               <button onClick={handleSubmitClick} disabled={submitting}
                 className="font-sans font-semibold text-[0.9rem] text-black bg-white px-10 py-3.5 rounded-full hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed max-sm:w-full max-sm:py-4">
                 {submitting ? "submitting..." : "submit application"}
@@ -382,7 +549,7 @@ function In({ value, onChange, placeholder, type = "text", maxLength, invalid }:
   return (
     <div>
       <input type={type} value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} maxLength={maxLength}
-        className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.08] rounded-lg outline-none transition-colors placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 border ${
+        className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem] max-sm:py-3.5 border ${
           invalid ? "border-red-500/60" : "border-white/[0.1] focus:border-white/[0.25]"
         }`} />
       {maxLength && <p className="mt-1 font-sans text-[0.7rem] text-[#807d78]">{(value || "").length}/{maxLength}</p>}
@@ -399,7 +566,7 @@ function Ta({ value, onChange, placeholder, invalid, maxChars = 350 }: {
   return (
     <div className="relative">
       <textarea value={value || ""} onChange={(e) => { if (e.target.value.length <= maxChars) onChange(e.target.value); }} placeholder={placeholder} rows={4}
-        className={`w-full px-4 py-3 pb-7 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.08] rounded-lg outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 max-sm:pb-7 border ${
+        className={`w-full px-4 py-3 pb-7 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none transition-colors resize-y placeholder:text-[#a09d98] max-sm:text-[1rem] max-sm:py-3.5 max-sm:pb-7 border ${
           invalid ? "border-red-500/60" : over ? "border-amber-500/50" : "border-white/[0.1] focus:border-white/[0.25]"
         }`} />
       <span className={`absolute bottom-2.5 right-3.5 font-sans text-[0.6rem] pointer-events-none ${charCount > maxChars * 0.9 ? "text-amber-400/70" : "text-[#807d78]/40"}`}>{charCount}/{maxChars}</span>
@@ -408,15 +575,15 @@ function Ta({ value, onChange, placeholder, invalid, maxChars = 350 }: {
 }
 
 function Toggle({ value, onChange, invalid }: { value: boolean | null; onChange: (v: boolean) => void; invalid?: boolean }) {
-  const base = invalid ? "border-red-500/60" : "border-white/[0.1] hover:border-white/[0.25]";
+  const base = invalid ? "border-red-500/60" : "border-white/[0.15] hover:border-white/[0.3]";
   return (
     <div className="flex gap-2">
       <button onClick={() => onChange(true)}
         className={`font-sans text-[0.8rem] px-5 py-2 rounded-lg border transition-colors min-h-[44px] min-w-[44px] ${
-          value === true ? "bg-white text-black border-white" : `bg-transparent text-[#807d78] ${base}`}`}>yes</button>
+          value === true ? "bg-white text-black border-white" : `bg-white/[0.08] text-white ${base}`}`}>yes</button>
       <button onClick={() => onChange(false)}
         className={`font-sans text-[0.8rem] px-5 py-2 rounded-lg border transition-colors min-h-[44px] min-w-[44px] ${
-          value === false ? "bg-white text-black border-white" : `bg-transparent text-[#807d78] ${base}`}`}>no</button>
+          value === false ? "bg-white text-black border-white" : `bg-white/[0.08] text-white ${base}`}`}>no</button>
     </div>
   );
 }
