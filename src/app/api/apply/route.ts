@@ -80,10 +80,15 @@ export async function POST(request: NextRequest) {
     time_working: s("time_working"),
     other_commitments: s("other_commitments"),
     six_week_focus: s("six_week_focus"),
+    world_needs: s("world_needs"),
+    why_you: s("why_you"),
     has_investment: b("has_investment"),
     funding_details: s("funding_details"),
     funding_amount: s("funding_amount"),
+    has_legal_entity: b("has_legal_entity"),
+    fundraising: b("fundraising"),
     how_heard: s("how_heard"),
+    inspired_by: s("inspired_by"),
     anything_else: s("anything_else"),
   };
 
