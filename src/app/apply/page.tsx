@@ -77,29 +77,31 @@ export default function ApplyPage() {
 
   return (
     <div className="bg-black">
-      <div className="pb-20 px-8 max-sm:pt-8 max-sm:px-5">
+      <div className="pb-20 px-12 max-sm:pt-8 max-sm:px-5">
         <div className="flex w-full gap-16 max-sm:gap-0">
 
           {/* Sidebar */}
-          <aside className="hidden md:flex flex-col w-[200px] shrink-0 sticky top-0 self-start pt-10">
-            <a href="/" className="font-serif font-light text-[1rem] text-[#f0eeea] tracking-[-0.02em] mb-10">endless founders</a>
-            <nav className="flex flex-col gap-0.5">
-              {sections.map((s) => (
-                <button key={s} onClick={() => scrollToSection(s)}
-                  className={`text-left font-sans text-[0.8rem] px-3 py-2 rounded-lg transition-colors ${
-                    activeSection === s ? "font-medium text-[#f0eeea] bg-white/[0.06]" : "font-light text-[#807d78] hover:text-[#f0eeea]"
-                  }`}>{s}</button>
-              ))}
-            </nav>
-          </aside>
+          <div className="hidden md:block w-[200px] shrink-0">
+            <div className="sticky top-0 pt-12">
+              <a href="/" className="block font-serif font-light text-[1rem] text-[#f0eeea] tracking-[-0.02em] mb-6">endless founders</a>
+              <nav className="flex flex-col gap-0.5">
+                {sections.map((s) => (
+                  <button key={s} onClick={() => scrollToSection(s)}
+                    className={`text-left font-sans text-[0.8rem] px-0 py-2 transition-colors ${
+                      activeSection === s ? "font-semibold text-[#f0eeea]" : "font-light text-[#807d78] hover:text-[#f0eeea]"
+                    }`}>{s}</button>
+                ))}
+              </nav>
+            </div>
+          </div>
 
           {/* Form */}
-          <main ref={contentRef} className="flex-1 max-w-xl pt-10 max-sm:max-w-full max-sm:w-full max-sm:pt-0">
+          <main ref={contentRef} className="flex-1 max-w-xl pt-12 max-sm:max-w-full max-sm:w-full max-sm:pt-0">
             <div className="md:hidden mb-8">
               <a href="/" className="font-serif font-light text-[1rem] text-[#f0eeea]">endless founders</a>
             </div>
 
-            <h1 className="font-serif font-light text-[2rem] text-[#f0eeea] tracking-[-0.02em] mb-1">the application</h1>
+            <h1 className="font-serif font-light text-[1.6rem] text-[#f0eeea] tracking-[-0.02em] mb-1">the application</h1>
             <p className="font-sans font-light text-[0.85rem] text-[#807d78] mb-12">summer 2026 · takes about 10 minutes</p>
 
             {error && (

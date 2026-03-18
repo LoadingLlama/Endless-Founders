@@ -5,15 +5,16 @@
   --font-sans: var(--font-outfit);
 }
 
-html, body {
-  min-height: 100%;
-  height: auto !important;
-  overflow-y: auto !important;
-  overflow-x: hidden;
+html {
   background: #000;
   color: #f0eeea;
   font-family: var(--font-sans);
   scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: #000;
 }
 
 @keyframes fadeUp {
