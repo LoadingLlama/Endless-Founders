@@ -56,6 +56,8 @@ export default function ApplyPage() {
     { key: "age", label: "age", section: "your experience" },
     { key: "location", label: "location", section: "your experience" },
     { key: "linkedin", label: "linkedin", section: "your experience" },
+    { key: "school", label: "school", section: "your experience" },
+    { key: "major", label: "major", section: "your experience" },
     { key: "accomplishments", label: "accomplishments", section: "your experience" },
     { key: "skills", label: "skills", section: "your experience" },
     { key: "stage", label: "stage", section: "your idea" },
@@ -157,13 +159,13 @@ export default function ApplyPage() {
               <F label="last name" required invalid={isInvalid("last_name")}><In value={form.last_name as string} onChange={(v) => set("last_name", v)} invalid={isInvalid("last_name")} /></F>
               <F label="email" required invalid={isInvalid("email")}><In type="email" value={form.email as string} onChange={(v) => set("email", v)} placeholder="you@example.com" invalid={isInvalid("email")} /></F>
               <F label="age" required invalid={isInvalid("age")}><In value={form.age as string} onChange={(v) => set("age", v)} placeholder="e.g. 21" invalid={isInvalid("age")} /></F>
-              <F label="school"><In value={form.school as string} onChange={(v) => set("school", v)} placeholder="e.g. uc berkeley, n/a" /></F>
-              <F label="major"><In value={form.major as string} onChange={(v) => set("major", v)} placeholder="e.g. computer science, n/a" /></F>
+              <F label="school" required invalid={isInvalid("school")}><In value={form.school as string} onChange={(v) => set("school", v)} placeholder="e.g. uc berkeley, n/a" invalid={isInvalid("school")} /></F>
+              <F label="major" required invalid={isInvalid("major")}><In value={form.major as string} onChange={(v) => set("major", v)} placeholder="e.g. computer science, n/a" invalid={isInvalid("major")} /></F>
               <F label="where do you live currently?" required invalid={isInvalid("location")}><In value={form.location as string} onChange={(v) => set("location", v)} placeholder="e.g. san francisco, ca" invalid={isInvalid("location")} /></F>
               <F label="linkedin" required invalid={isInvalid("linkedin")}><In value={form.linkedin as string} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/in/..." invalid={isInvalid("linkedin")} /></F>
               <F label="x / twitter"><In value={form.twitter as string} onChange={(v) => set("twitter", v)} placeholder="https://x.com/..." /></F>
               <F label="what are your 2-3 most important accomplishments over the past 3 years?" required invalid={isInvalid("accomplishments")}>
-                <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} maxWords={100} />
+                <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} maxChars={800} />
               </F>
               <F label="what's your superpower? what skills do you bring?" required invalid={isInvalid("skills")}>
                 <Ta value={form.skills as string} onChange={(v) => set("skills", v)} placeholder="e.g. full-stack engineer, designer, sales, domain expertise" invalid={isInvalid("skills")} />
@@ -246,7 +248,7 @@ export default function ApplyPage() {
                 <In value={form.how_heard as string} onChange={(v) => set("how_heard", v)} placeholder="e.g. linkedin, friend, twitter" />
               </F>
               <F label="anything else?">
-                <Ta value={form.anything_else as string} onChange={(v) => set("anything_else", v)} />
+                <Ta value={form.anything_else as string} onChange={(v) => set("anything_else", v)} maxChars={2000} />
               </F>
             </Sec>
 
@@ -333,28 +335,19 @@ function In({ value, onChange, placeholder, type = "text", maxLength, invalid }:
   );
 }
 
-function Ta({ value, onChange, placeholder, invalid, maxWords = 100 }: {
-  value?: string; onChange: (v: string) => void; placeholder?: string; invalid?: boolean; maxWords?: number;
+function Ta({ value, onChange, placeholder, invalid, maxChars = 500 }: {
+  value?: string; onChange: (v: string) => void; placeholder?: string; invalid?: boolean; maxChars?: number;
 }) {
-  const wordCount = (value || "").trim().split(/\s+/).filter(Boolean).length;
-  const over = wordCount > maxWords;
-
-  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const words = e.target.value.trim().split(/\s+/).filter(Boolean);
-    if (words.length > maxWords) {
-      onChange(words.slice(0, maxWords).join(" "));
-      return;
-    }
-    onChange(e.target.value);
-  }
+  const charCount = (value || "").length;
+  const over = charCount > maxChars;
 
   return (
     <div className="relative">
-      <textarea value={value || ""} onChange={handleChange} placeholder={placeholder} rows={4}
+      <textarea value={value || ""} onChange={(e) => { if (e.target.value.length <= maxChars) onChange(e.target.value); }} placeholder={placeholder} rows={4}
         className={`w-full px-4 py-3 pb-7 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.04] rounded-xl outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 max-sm:pb-7 border ${
           invalid ? "border-red-500/60" : over ? "border-amber-500/50" : "border-white/[0.1] focus:border-white/[0.25]"
         }`} />
-      <span className={`absolute bottom-2.5 right-3.5 font-sans text-[0.6rem] pointer-events-none ${over ? "text-amber-400/70" : "text-[#807d78]/40"}`}>{wordCount}/{maxWords}</span>
+      <span className={`absolute bottom-2.5 right-3.5 font-sans text-[0.6rem] pointer-events-none ${charCount > maxChars * 0.9 ? "text-amber-400/70" : "text-[#807d78]/40"}`}>{charCount}/{maxChars}</span>
     </div>
   );
 }

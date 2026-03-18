@@ -4,7 +4,7 @@
  */
 export default function Footer() {
   return (
-    <footer className="relative z-20 bg-black border-t border-white/[0.06] py-10 px-8 max-sm:px-6">
+    <footer className="relative z-20 bg-black border-t border-white/[0.06] py-10 px-8 max-sm:px-6 mb-0">
       <div className="max-w-5xl mx-auto flex items-center justify-between max-sm:flex-col max-sm:items-center max-sm:text-center max-sm:gap-5">
         {/* Location */}
         <div className="font-sans font-light text-[0.7rem] tracking-[0.06em] text-[#b0ada8]">
