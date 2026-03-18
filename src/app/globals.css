@@ -10,12 +10,13 @@ html {
   color: #f0eeea;
   font-family: var(--font-sans);
   scroll-behavior: smooth;
+  overscroll-behavior: none;
 }
 
 body {
   min-height: 100vh;
   background: #000;
-  overscroll-behavior-y: none;
+  overscroll-behavior: none;
 }
 
 @keyframes fadeUp {
