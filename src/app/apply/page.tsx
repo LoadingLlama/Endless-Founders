@@ -338,9 +338,19 @@ function Ta({ value, onChange, placeholder, invalid, maxWords = 100 }: {
 }) {
   const wordCount = (value || "").trim().split(/\s+/).filter(Boolean).length;
   const over = wordCount > maxWords;
+
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const words = e.target.value.trim().split(/\s+/).filter(Boolean);
+    if (words.length > maxWords) {
+      onChange(words.slice(0, maxWords).join(" "));
+      return;
+    }
+    onChange(e.target.value);
+  }
+
   return (
     <div className="relative">
-      <textarea value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={4}
+      <textarea value={value || ""} onChange={handleChange} placeholder={placeholder} rows={4}
         className={`w-full px-4 py-3 pb-7 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.04] rounded-xl outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 max-sm:pb-7 border ${
           invalid ? "border-red-500/60" : over ? "border-amber-500/50" : "border-white/[0.1] focus:border-white/[0.25]"
         }`} />
