@@ -18,8 +18,8 @@ export default function Home() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative h-dvh overflow-hidden max-sm:h-[calc(100vh-20px)]">
-        <MarbleBackground />
+      <section className="relative h-dvh overflow-hidden max-sm:h-[calc(100vh-20px)]" style={{ willChange: "transform" }}>
+        <MarbleBackground className="absolute top-0 left-0 w-full h-full z-0" />
 
         {/* Bottom fade — smooth to black so it blends into next section */}
         <div className="absolute bottom-0 left-0 w-full h-[45%] z-[3] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.5)_40%,rgba(0,0,0,0.9)_80%,rgb(0,0,0)_100%)]" />

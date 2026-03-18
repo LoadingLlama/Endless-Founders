@@ -100,8 +100,9 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
 
     function resize() {
       if (!canvas || !gl) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
       gl.viewport(0, 0, canvas.width, canvas.height);
     }
 
@@ -153,6 +154,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     <canvas
       ref={canvasRef}
       className={className}
+      style={{ willChange: "transform" }}
     />
   );
 }
