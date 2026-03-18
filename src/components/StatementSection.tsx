@@ -12,8 +12,8 @@ export default function StatementSection() {
         </p>
 
         {/* Giant statement */}
-        <h2 className="reveal reveal-delay-1 font-serif font-normal text-[clamp(2.8rem,7vw,6.5rem)] tracking-[-0.03em] leading-[1.05] text-[#1a1a1a] mb-14 max-sm:mb-10">
-          <em>build and launch</em> with<br />
+        <h2 className="reveal reveal-delay-1 font-serif font-normal text-[clamp(2.8rem,7vw,6.5rem)] tracking-[-0.03em] leading-[1.05] text-[#1a1a1a] mb-14 max-sm:mb-10 max-sm:text-[clamp(2rem,10vw,3.5rem)]">
+          <em>build and launch</em> with<br className="max-sm:hidden" />{" "}
           the ambitious
         </h2>
 

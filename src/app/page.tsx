@@ -18,7 +18,7 @@ export default function Home() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative h-screen min-h-[600px] overflow-hidden">
+      <section className="relative h-screen min-h-[600px] overflow-hidden max-sm:min-h-[500px]">
         <MarbleBackground />
 
         {/* Bottom fade — smooth to black so it blends into next section */}
@@ -36,26 +36,22 @@ export default function Home() {
             applications for the summer 2026 cohort open now
           </p>
 
-          {/* Frosted glass Apply button with arrow */}
+          {/* Apply link — underlined, lifts on hover */}
           <div className="opacity-0 translate-y-[8px] animate-[fadeUp_0.5s_ease-out_0.5s_forwards]">
             <a
               href="/apply"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-4 px-8 py-3 font-sans font-medium text-[1.2rem] tracking-[0.01em] text-white bg-white/[0.18] border-none rounded-full cursor-pointer transition-all duration-300 hover:bg-white/[0.25] active:scale-[0.97] max-sm:px-7 max-sm:py-2.5 max-sm:text-[1rem]"
+              className="inline-flex items-center justify-center font-sans font-medium text-[1.4rem] tracking-[0.01em] text-white border-b border-white/40 pb-1 hover:border-white hover:-translate-y-[2px] transition-all duration-300 max-sm:text-[1.1rem] max-sm:min-h-[44px]"
             >
-              <svg className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-[4px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 12h20" />
-                <path d="M16 6l6 6-6 6" />
-              </svg>
-              apply
+              apply now
             </a>
           </div>
 
         </div>
 
         {/* Bottom bar: location left, socials right */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-end justify-between px-10 pb-8 opacity-0 animate-[fadeIn_0.5s_ease_0.7s_forwards] max-sm:px-6 max-sm:pb-6">
+        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-end justify-between px-10 pb-8 opacity-0 animate-[fadeIn_0.5s_ease_0.7s_forwards] max-sm:px-5 max-sm:pb-[calc(env(safe-area-inset-bottom,0px)+1.5rem)]">
           {/* Location */}
           <div className="font-sans font-light text-[0.85rem] tracking-[0.02em] text-[#d5d3ce] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)] max-sm:text-[0.75rem]">
             location tbd

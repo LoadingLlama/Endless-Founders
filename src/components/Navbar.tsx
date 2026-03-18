@@ -34,7 +34,7 @@ export default function Navbar() {
       >
         <a
           href="/"
-          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-4 max-sm:py-2 max-sm:text-[0.78rem]"
+          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-2.5 max-sm:text-[0.75rem] max-sm:min-h-[44px] max-sm:flex max-sm:items-center"
         >
           home
         </a>
@@ -43,14 +43,14 @@ export default function Navbar() {
           href="/apply"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans font-semibold text-[0.85rem] tracking-[0.01em] text-black bg-white px-6 py-1.5 rounded-full hover:bg-white/90 transition-all max-sm:px-4 max-sm:py-1.5 max-sm:text-[0.78rem]"
+          className="font-sans font-semibold text-[0.85rem] tracking-[0.01em] text-black bg-white px-6 py-1.5 rounded-full hover:bg-white/90 transition-all max-sm:px-3.5 max-sm:py-2 max-sm:text-[0.75rem] max-sm:min-h-[44px] max-sm:flex max-sm:items-center"
         >
           apply now
         </a>
 
         <a
           href="/about"
-          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-4 max-sm:py-2 max-sm:text-[0.78rem]"
+          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-2.5 max-sm:text-[0.75rem] max-sm:min-h-[44px] max-sm:flex max-sm:items-center"
         >
           about us
         </a>
