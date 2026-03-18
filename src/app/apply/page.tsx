@@ -53,6 +53,7 @@ export default function ApplyPage() {
     { key: "first_name", label: "first name", section: "your experience" },
     { key: "last_name", label: "last name", section: "your experience" },
     { key: "email", label: "email", section: "your experience" },
+    { key: "age", label: "age", section: "your experience" },
     { key: "location", label: "location", section: "your experience" },
     { key: "linkedin", label: "linkedin", section: "your experience" },
     { key: "accomplishments", label: "accomplishments", section: "your experience" },
@@ -155,11 +156,14 @@ export default function ApplyPage() {
               <F label="first name" required invalid={isInvalid("first_name")}><In value={form.first_name as string} onChange={(v) => set("first_name", v)} invalid={isInvalid("first_name")} /></F>
               <F label="last name" required invalid={isInvalid("last_name")}><In value={form.last_name as string} onChange={(v) => set("last_name", v)} invalid={isInvalid("last_name")} /></F>
               <F label="email" required invalid={isInvalid("email")}><In type="email" value={form.email as string} onChange={(v) => set("email", v)} placeholder="you@example.com" invalid={isInvalid("email")} /></F>
+              <F label="age" required invalid={isInvalid("age")}><In value={form.age as string} onChange={(v) => set("age", v)} placeholder="e.g. 21" invalid={isInvalid("age")} /></F>
+              <F label="school"><In value={form.school as string} onChange={(v) => set("school", v)} placeholder="e.g. uc berkeley, n/a" /></F>
+              <F label="major"><In value={form.major as string} onChange={(v) => set("major", v)} placeholder="e.g. computer science, n/a" /></F>
               <F label="where do you live currently?" required invalid={isInvalid("location")}><In value={form.location as string} onChange={(v) => set("location", v)} placeholder="e.g. san francisco, ca" invalid={isInvalid("location")} /></F>
               <F label="linkedin" required invalid={isInvalid("linkedin")}><In value={form.linkedin as string} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/in/..." invalid={isInvalid("linkedin")} /></F>
               <F label="x / twitter"><In value={form.twitter as string} onChange={(v) => set("twitter", v)} placeholder="https://x.com/..." /></F>
               <F label="what are your 2-3 most important accomplishments over the past 3 years?" required invalid={isInvalid("accomplishments")}>
-                <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} />
+                <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} maxWords={200} />
               </F>
               <F label="what's your superpower? what skills do you bring?" required invalid={isInvalid("skills")}>
                 <Ta value={form.skills as string} onChange={(v) => set("skills", v)} placeholder="e.g. full-stack engineer, designer, sales, domain expertise" invalid={isInvalid("skills")} />
@@ -208,6 +212,14 @@ export default function ApplyPage() {
               <F label="do you have revenue?">
                 <Toggle value={form.has_revenue as boolean | null} onChange={(v) => set("has_revenue", v)} />
               </F>
+              <F label="have you raised any funding?">
+                <Toggle value={form.has_investment as boolean | null} onChange={(v) => set("has_investment", v)} />
+              </F>
+              {form.has_investment === true && (
+                <F label="how much and from whom?">
+                  <In value={form.funding_details as string} onChange={(v) => set("funding_details", v)} placeholder="e.g. $100k pre-seed from angels" />
+                </F>
+              )}
               <F label="link to product, demo, or github">
                 <In value={form.product_link as string} onChange={(v) => set("product_link", v)} placeholder="https://... (skip if n/a)" />
               </F>
@@ -321,14 +333,19 @@ function In({ value, onChange, placeholder, type = "text", maxLength, invalid }:
   );
 }
 
-function Ta({ value, onChange, placeholder, invalid }: {
-  value?: string; onChange: (v: string) => void; placeholder?: string; invalid?: boolean;
+function Ta({ value, onChange, placeholder, invalid, maxWords = 150 }: {
+  value?: string; onChange: (v: string) => void; placeholder?: string; invalid?: boolean; maxWords?: number;
 }) {
+  const wordCount = (value || "").trim().split(/\s+/).filter(Boolean).length;
+  const over = wordCount > maxWords;
   return (
-    <textarea value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={4}
-      className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.04] rounded-xl outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 border ${
-        invalid ? "border-red-500/60" : "border-white/[0.1] focus:border-white/[0.25]"
-      }`} />
+    <div>
+      <textarea value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={4}
+        className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.04] rounded-xl outline-none transition-colors resize-y placeholder:text-[#807d78] max-sm:text-[1rem] max-sm:py-3.5 border ${
+          invalid ? "border-red-500/60" : over ? "border-amber-500/50" : "border-white/[0.1] focus:border-white/[0.25]"
+        }`} />
+      <p className={`mt-1 font-sans text-[0.65rem] ${over ? "text-amber-400/70" : "text-[#807d78]/50"}`}>{wordCount}/{maxWords} words</p>
+    </div>
   );
 }
 

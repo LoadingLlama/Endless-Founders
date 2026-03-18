@@ -18,7 +18,7 @@ export default function Home() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative h-screen min-h-[600px] overflow-hidden max-sm:min-h-[500px]">
+      <section className="relative h-dvh min-h-[600px] overflow-hidden max-sm:min-h-0">
         <MarbleBackground />
 
         {/* Bottom fade — smooth to black so it blends into next section */}

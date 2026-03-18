@@ -2,11 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 /**
- * POST /api/apply — saves a full application to the Supabase `applications` table.
- * Uses service role key for server-side insert.
- *
- * @param request - JSON body with all application fields.
- * @returns 200 on success, 400 on validation error, 409 on duplicate, 500 on failure.
+ * POST /api/apply — saves application to Supabase `applications` table.
+ * Only sends fields that exist in the table. Ignores unknown fields gracefully.
  */
 
 const supabase = createClient(
@@ -31,7 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "name required" }, { status: 400 });
   }
 
-  // Check for duplicate application
+  // Check for duplicate
   const { data: existing } = await supabase
     .from("applications")
     .select("email")
@@ -45,33 +42,49 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Helper: trim string or null
+  const s = (key: string) => body[key]?.trim() || null;
+  const b = (key: string) => body[key] ?? null;
+
   const application = {
     email,
-    first_name: body.first_name?.trim(),
-    last_name: body.last_name?.trim(),
-    location: body.location?.trim() || null,
-    linkedin: body.linkedin?.trim() || null,
-    twitter: body.twitter?.trim() || null,
-    website: body.website?.trim() || null,
-    has_cofounder: body.has_cofounder ?? null,
-    looking_for_cofounder: body.looking_for_cofounder ?? null,
-    vision: body.vision?.trim() || null,
-    building: body.building?.trim() || null,
-    building_details: body.building_details?.trim() || null,
-    why_this_idea: body.why_this_idea?.trim() || null,
-    world_needs: body.world_needs?.trim() || null,
-    traction: body.traction?.trim() || null,
-    has_users: body.has_users ?? null,
-    user_count: body.user_count?.trim() || null,
-    has_revenue: body.has_revenue ?? null,
-    accomplishments: body.accomplishments?.trim() || null,
-    one_belief: body.one_belief?.trim() || null,
-    has_legal_entity: body.has_legal_entity ?? null,
-    equity_breakdown: body.equity_breakdown?.trim() || null,
-    has_investment: body.has_investment ?? null,
-    past_programs: body.past_programs?.trim() || null,
-    how_heard: body.how_heard?.trim() || null,
-    inspired_by: body.inspired_by?.trim() || null,
+    first_name: s("first_name"),
+    last_name: s("last_name"),
+    age: s("age"),
+    school: s("school"),
+    major: s("major"),
+    location: s("location"),
+    linkedin: s("linkedin"),
+    twitter: s("twitter"),
+    accomplishments: s("accomplishments"),
+    skills: s("skills"),
+    past_programs: s("past_programs"),
+    has_cofounder: b("has_cofounder"),
+    looking_for_cofounder: b("looking_for_cofounder"),
+    one_belief: s("one_belief"),
+    stage: s("stage"),
+    problem: s("problem"),
+    building: s("building"),
+    why_this_idea: s("why_this_idea"),
+    target_user: s("target_user"),
+    vision: s("vision"),
+    talked_to_users: b("talked_to_users"),
+    has_users: b("has_users"),
+    user_count: s("user_count"),
+    has_revenue: b("has_revenue"),
+    revenue_amount: s("revenue_amount"),
+    product_link: s("product_link"),
+    why_ef: s("why_ef"),
+    can_commit_6_weeks: b("can_commit_6_weeks"),
+    full_time: b("full_time"),
+    time_working: s("time_working"),
+    other_commitments: s("other_commitments"),
+    six_week_focus: s("six_week_focus"),
+    has_investment: b("has_investment"),
+    funding_details: s("funding_details"),
+    funding_amount: s("funding_amount"),
+    how_heard: s("how_heard"),
+    anything_else: s("anything_else"),
   };
 
   const { error: insertError } = await supabase

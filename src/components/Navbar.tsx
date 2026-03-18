@@ -22,11 +22,11 @@ export default function Navbar() {
 
   return (
     <div
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-sm:top-4"
+      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-sm:top-3"
       style={isHome ? { opacity: 0, animation: "fadeIn 0.4s ease 0.6s forwards" } : undefined}
     >
       <nav
-        className={`flex items-center gap-1.5 px-2.5 py-2 rounded-full transition-all duration-300 max-sm:gap-1 max-sm:px-1.5 max-sm:py-1.5 ${
+        className={`flex items-center gap-1.5 px-2.5 py-2 rounded-full transition-all duration-300 whitespace-nowrap max-sm:gap-0.5 max-sm:px-1.5 max-sm:py-1.5 ${
           scrolled
             ? "bg-black/70 backdrop-blur-xl"
             : "bg-white/[0.06] backdrop-blur-sm"
@@ -34,7 +34,7 @@ export default function Navbar() {
       >
         <a
           href="/"
-          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-2.5 max-sm:text-[0.75rem] max-sm:min-h-[44px] max-sm:flex max-sm:items-center"
+          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
         >
           home
         </a>
@@ -43,14 +43,14 @@ export default function Navbar() {
           href="/apply"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans font-semibold text-[0.85rem] tracking-[0.01em] text-black bg-white px-6 py-1.5 rounded-full hover:bg-white/90 transition-all max-sm:px-3.5 max-sm:py-2 max-sm:text-[0.75rem] max-sm:min-h-[44px] max-sm:flex max-sm:items-center"
+          className="font-sans font-semibold text-[0.85rem] tracking-[0.01em] text-black bg-white px-6 py-1.5 rounded-full hover:bg-white/90 transition-all max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
         >
           apply now
         </a>
 
         <a
           href="/about"
-          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-2.5 max-sm:text-[0.75rem] max-sm:min-h-[44px] max-sm:flex max-sm:items-center"
+          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
         >
           about us
         </a>
