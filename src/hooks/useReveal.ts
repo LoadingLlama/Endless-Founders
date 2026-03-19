@@ -5,7 +5,7 @@ import { useEffect } from "react";
 /**
  * Sets up IntersectionObserver to add 'visible' class to elements with 'reveal' class.
  * Uses threshold 0 so even opacity:0 elements trigger.
- * Re-observes on DOM changes to catch dynamically rendered content.
+ * Observes on mount and once more after a short delay to catch late-rendered content.
  */
 export function useReveal() {
   useEffect(() => {
@@ -28,14 +28,12 @@ export function useReveal() {
     }
 
     observeAll();
-
-    // Re-observe when DOM changes
-    const mutation = new MutationObserver(observeAll);
-    mutation.observe(document.body, { childList: true, subtree: true });
+    // Catch any elements rendered after initial mount
+    const timer = setTimeout(observeAll, 100);
 
     return () => {
+      clearTimeout(timer);
       observer.disconnect();
-      mutation.disconnect();
     };
   }, []);
 }

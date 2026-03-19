@@ -100,7 +100,8 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
 
     function resize() {
       if (!canvas || !gl) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Cap at 1x DPR to reduce GPU load — visual difference is negligible on marble
+      const dpr = 1;
       canvas.width = canvas.clientWidth * dpr;
       canvas.height = canvas.clientHeight * dpr;
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -133,16 +134,20 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     const uT = gl.getUniformLocation(prog, "T");
     const t0 = Date.now();
     let animId: number;
+    let lastFrame = 0;
+    const FRAME_INTERVAL = 1000 / 30; // Cap at 30fps — marble is slow-moving
 
-    function render() {
+    function render(now: number) {
+      animId = requestAnimationFrame(render);
+      if (now - lastFrame < FRAME_INTERVAL) return;
+      lastFrame = now;
       const t = (Date.now() - t0) / 1000;
       gl!.uniform2f(uR, canvas!.width, canvas!.height);
       gl!.uniform1f(uT, t);
       gl!.drawArrays(gl!.TRIANGLES, 0, 6);
-      animId = requestAnimationFrame(render);
     }
 
-    render();
+    animId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener("resize", resize);
