@@ -46,10 +46,8 @@ export default function ApplyPage() {
   const [activeSection, setActiveSection] = useState("your experience");
   const [form, setForm] = useState<FormData>({});
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try { return localStorage.getItem(STORAGE_KEY_SUBMITTED) === "true"; } catch { return false; }
-  });
+  const [submitted, setSubmitted] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const [error, setError] = useState("");
   const [fieldError, setFieldError] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Set<string>>(new Set());
@@ -61,12 +59,19 @@ export default function ApplyPage() {
 
   // Load saved data from localStorage after hydration
   useEffect(() => {
-    if (submitted) return;
+    try {
+      if (localStorage.getItem(STORAGE_KEY_SUBMITTED) === "true") {
+        setSubmitted(true);
+        setHydrated(true);
+        return;
+      }
+    } catch { /* silent */ }
     const savedForm = loadSaved<FormData>(STORAGE_KEY, {});
     const savedCofounders = loadSaved<Cofounder[]>(STORAGE_KEY_COFOUNDERS, [emptyCofounder()]);
     if (Object.keys(savedForm).length > 0) setForm(savedForm);
     if (savedCofounders.length > 0) setCofounders(savedCofounders);
     requestAnimationFrame(() => { isFirstRender.current = false; });
+    setHydrated(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -256,6 +261,10 @@ export default function ApplyPage() {
       setFieldError({ _general: "failed to submit. please try again." });
     }
     setSubmitting(false);
+  }
+
+  if (!hydrated) {
+    return <div className="min-h-screen bg-black" />;
   }
 
   if (submitted) {
