@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 /**
  * Floating pill navbar centered at top.
@@ -32,12 +33,15 @@ export default function Navbar() {
             : "bg-white/[0.06] backdrop-blur-sm"
         }`}
       >
-        <a
+        <Link
           href="/"
-          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem]"
+          prefetch
+          className={`font-sans font-normal text-[0.85rem] tracking-[0.01em] hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem] ${
+            pathname === "/" ? "text-white underline underline-offset-4 decoration-white/60" : "text-white/80"
+          }`}
         >
           home
-        </a>
+        </Link>
 
         <a
           href="/apply"
@@ -48,12 +52,15 @@ export default function Navbar() {
           apply now
         </a>
 
-        <a
+        <Link
           href="/about"
-          className="font-sans font-normal text-[0.85rem] tracking-[0.01em] text-white/80 hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem]"
+          prefetch
+          className={`font-sans font-normal text-[0.85rem] tracking-[0.01em] hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem] ${
+            pathname === "/about" ? "text-white underline underline-offset-4 decoration-white/60" : "text-white/80"
+          }`}
         >
           about us
-        </a>
+        </Link>
       </nav>
     </div>
   );

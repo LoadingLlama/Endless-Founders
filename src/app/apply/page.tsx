@@ -43,16 +43,26 @@ function loadSaved<T>(key: string, fallback: T): T {
 
 export default function ApplyPage() {
   const [activeSection, setActiveSection] = useState("about you");
-  const [form, setForm] = useState<FormData>(() => loadSaved<FormData>(STORAGE_KEY, {}));
+  const [form, setForm] = useState<FormData>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState<Set<string>>(new Set());
-  const [cofounders, setCofounders] = useState<Cofounder[]>(() => loadSaved<Cofounder[]>(STORAGE_KEY_COFOUNDERS, [emptyCofounder()]));
+  const [cofounders, setCofounders] = useState<Cofounder[]>([emptyCofounder()]);
   const [saveLabel, setSaveLabel] = useState<"idle" | "saving" | "saved">("idle");
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Load saved data from localStorage after hydration
+  useEffect(() => {
+    const savedForm = loadSaved<FormData>(STORAGE_KEY, {});
+    const savedCofounders = loadSaved<Cofounder[]>(STORAGE_KEY_COFOUNDERS, [emptyCofounder()]);
+    if (Object.keys(savedForm).length > 0) setForm(savedForm);
+    if (savedCofounders.length > 0) setCofounders(savedCofounders);
+    // Mark first render done after a tick so save effects skip the load
+    requestAnimationFrame(() => { isFirstRender.current = false; });
+  }, []);
 
   // Auto-save form to localStorage on every change (skip initial render)
   useEffect(() => {
@@ -158,6 +168,7 @@ export default function ApplyPage() {
     { key: "world_needs", label: "how world needs this", section: "your idea" },
     { key: "why_you", label: "why you're the best person", section: "your idea" },
     { key: "target_user", label: "target user", section: "your idea" },
+    { key: "talked_to_users", label: "talked to users", section: "your idea" },
     { key: "has_legal_entity", label: "legal entity", section: "your idea" },
     { key: "has_investment", label: "taken investment", section: "your idea" },
     { key: "fundraising", label: "fundraising", section: "your idea" },
@@ -392,26 +403,10 @@ export default function ApplyPage() {
               <F label="who is this for?" required invalid={isInvalid("target_user")}>
                 <In value={form.target_user as string} onChange={(v) => set("target_user", v)} placeholder="e.g. college students juggling 3+ platforms for assignments, or freelance designers billing $5k+/mo" invalid={isInvalid("target_user")} />
               </F>
-              <F label="have you talked to potential users?">
-                <Toggle value={form.talked_to_users as boolean | null} onChange={(v) => set("talked_to_users", v)} />
+              <F label="have you talked to potential users?" required invalid={isInvalid("talked_to_users")}>
+                <Toggle value={form.talked_to_users as boolean | null} onChange={(v) => set("talked_to_users", v)} invalid={isInvalid("talked_to_users")} />
               </F>
-              <F label="do you have users?">
-                <Toggle value={form.has_users as boolean | null} onChange={(v) => set("has_users", v)} />
-              </F>
-              {form.has_users === true && (
-                <F label="how many users?">
-                  <In value={form.user_count as string} onChange={(v) => set("user_count", v)} placeholder="e.g. 50, 500, 10k" />
-                </F>
-              )}
-              <F label="do you have revenue?">
-                <Toggle value={form.has_revenue as boolean | null} onChange={(v) => set("has_revenue", v)} />
-              </F>
-              {form.has_revenue === true && (
-                <F label="how much revenue?">
-                  <In value={form.revenue_amount as string} onChange={(v) => set("revenue_amount", v)} placeholder="e.g. $1k/mo, $10k total" />
-                </F>
-              )}
-              <F label="have you formed any legal entity yet?" required invalid={isInvalid("has_legal_entity")}>
+<F label="have you formed any legal entity yet?" required invalid={isInvalid("has_legal_entity")}>
                 <p className="font-sans font-light text-[0.7rem] text-[#807d78] mb-2">this may be in the united states or another country.</p>
                 <Toggle value={form.has_legal_entity as boolean | null} onChange={(v) => set("has_legal_entity", v)} invalid={isInvalid("has_legal_entity")} />
               </F>

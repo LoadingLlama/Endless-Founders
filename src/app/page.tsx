@@ -27,17 +27,17 @@ export default function Home() {
         {/* Center content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-8 max-sm:px-6">
           {/* Title */}
-          <h1 className="font-serif font-light text-[clamp(3.5rem,10vw,8.5rem)] tracking-[-0.02em] leading-none text-[#f0eeea] mb-[2rem] opacity-0 translate-y-[12px] animate-[fadeUp_0.6s_ease-out_0.2s_forwards] [text-shadow:0_4px_80px_rgba(0,0,0,0.9),0_2px_30px_rgba(0,0,0,0.7)] max-sm:text-[clamp(2.6rem,13vw,4.5rem)] max-sm:mb-[1.2rem]">
+          <h1 className="reveal font-serif font-light text-[clamp(3.5rem,10vw,8.5rem)] tracking-[-0.02em] leading-none text-[#f0eeea] mb-[2rem] [text-shadow:0_4px_80px_rgba(0,0,0,0.9),0_2px_30px_rgba(0,0,0,0.7)] max-sm:text-[clamp(2.6rem,13vw,4.5rem)] max-sm:mb-[1.2rem]">
             <em>endless</em> founders
           </h1>
 
           {/* Subtitle */}
-          <p className="font-sans font-light text-[clamp(0.9rem,1.8vw,1.25rem)] tracking-[0.02em] text-[#d5d3ce] mb-10 opacity-0 translate-y-[8px] animate-[fadeUp_0.5s_ease-out_0.35s_forwards] [text-shadow:0_2px_20px_rgba(0,0,0,0.8)] max-sm:text-[0.85rem] max-sm:mb-8">
+          <p className="reveal reveal-delay-1 font-sans font-light text-[clamp(0.9rem,1.8vw,1.25rem)] tracking-[0.02em] text-[#d5d3ce] mb-10 [text-shadow:0_2px_20px_rgba(0,0,0,0.8)] max-sm:text-[0.85rem] max-sm:mb-8">
             applications for the summer 2026 cohort open now
           </p>
 
           {/* Apply link — underlined, lifts on hover */}
-          <div className="opacity-0 translate-y-[8px] animate-[fadeUp_0.5s_ease-out_0.5s_forwards]">
+          <div className="reveal reveal-delay-2">
             <a
               href="/apply"
               target="_blank"
@@ -51,7 +51,7 @@ export default function Home() {
         </div>
 
         {/* Bottom bar: location left, socials right */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between px-10 pb-8 opacity-0 animate-[fadeIn_0.5s_ease_0.7s_forwards] max-sm:px-5 max-sm:pb-6 max-sm:mb-2">
+        <div className="reveal reveal-delay-3 absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between px-10 pb-8 max-sm:px-5 max-sm:pb-6 max-sm:mb-2">
           {/* Location */}
           <div className="font-sans font-light text-[0.85rem] tracking-[0.02em] text-[#d5d3ce] [text-shadow:0_2px_12px_rgba(0,0,0,0.8)] max-sm:text-[0.75rem]">
             location tbd
