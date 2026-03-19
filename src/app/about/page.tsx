@@ -40,7 +40,7 @@ function PersonCard({ person }: { person: { name: string; title: string; img: st
           <p className="font-serif font-light text-[1.1rem] text-[#f0eeea] tracking-[-0.01em] max-sm:text-[0.85rem]">
             {person.name}
           </p>
-          <p className="font-sans font-light text-[0.75rem] text-[#807d78] tracking-[0.01em] max-sm:text-[0.65rem]">
+          <p className="font-sans font-light text-[0.75rem] text-[#807d78] tracking-[0.01em] max-sm:text-[0.7rem]">
             {person.title}
           </p>
         </div>

@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="relative z-20 bg-black border-t border-white/[0.06] py-10 px-8 max-sm:px-6 mb-0">
       <div className="max-w-5xl mx-auto flex items-center justify-between max-sm:flex-col max-sm:items-center max-sm:text-center max-sm:gap-5">
         {/* Location */}
-        <div className="font-sans font-light text-[0.7rem] tracking-[0.06em] text-[#b0ada8]">
+        <div className="font-sans font-light text-[0.75rem] tracking-[0.06em] text-[#b0ada8]">
           <svg
             style={{ width: 10, height: 10, marginRight: 5, verticalAlign: -1, opacity: 0.7, display: "inline" }}
             viewBox="0 0 24 24"
@@ -25,11 +25,11 @@ export default function Footer() {
 
         {/* Center mark */}
         <div className="flex items-center gap-2 max-sm:order-last">
-          <span className="font-sans font-light text-[0.55rem] tracking-[0.3em] text-[#807d78]">
+          <span className="font-sans font-light text-[0.7rem] tracking-[0.3em] text-[#807d78]">
             endless founders
           </span>
           <div className="w-[3px] h-[3px] rounded-full bg-[#807d78]" />
-          <span className="font-sans font-light text-[0.55rem] tracking-[0.3em] text-[#807d78]">
+          <span className="font-sans font-light text-[0.7rem] tracking-[0.3em] text-[#807d78]">
             2026
           </span>
         </div>

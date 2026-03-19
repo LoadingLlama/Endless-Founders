@@ -36,7 +36,7 @@ export default function Navbar() {
         <Link
           href="/"
           prefetch
-          className={`font-sans font-normal text-[0.85rem] tracking-[0.01em] hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem] ${
+          className={`font-sans font-normal text-[0.85rem] tracking-[0.01em] hover:text-white px-6 py-2 rounded-full transition-colors min-h-[44px] flex items-center max-sm:px-4 max-sm:py-2 max-sm:text-[0.8rem] ${
             pathname === "/" ? "text-white underline underline-offset-4 decoration-white/60" : "text-white/80"
           }`}
         >
@@ -47,7 +47,7 @@ export default function Navbar() {
           href="/apply"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans font-semibold text-[0.85rem] tracking-[0.01em] text-black bg-white px-6 py-1.5 rounded-full hover:bg-white/90 transition-all max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem]"
+          className="font-sans font-semibold text-[0.85rem] tracking-[0.01em] text-black bg-white px-6 py-1.5 rounded-full hover:bg-white/90 transition-all min-h-[44px] flex items-center max-sm:px-4 max-sm:py-2 max-sm:text-[0.8rem]"
         >
           apply now
         </a>
@@ -55,7 +55,7 @@ export default function Navbar() {
         <Link
           href="/about"
           prefetch
-          className={`font-sans font-normal text-[0.85rem] tracking-[0.01em] hover:text-white px-6 py-2 rounded-full transition-colors max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.78rem] ${
+          className={`font-sans font-normal text-[0.85rem] tracking-[0.01em] hover:text-white px-6 py-2 rounded-full transition-colors min-h-[44px] flex items-center max-sm:px-4 max-sm:py-2 max-sm:text-[0.8rem] ${
             pathname === "/about" ? "text-white underline underline-offset-4 decoration-white/60" : "text-white/80"
           }`}
         >

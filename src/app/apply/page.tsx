@@ -357,23 +357,23 @@ export default function ApplyPage() {
                           </div>
                           <div className="grid grid-cols-2 gap-4 mb-4 max-sm:grid-cols-1">
                             <div>
-                              <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">first name <span className="text-red-400 ml-1">*</span></label>
+                              <label className="block font-sans font-medium text-[0.85rem] text-[#c5c3be] mb-2 max-sm:text-[0.9rem]">first name <span className="text-red-400 ml-1">*</span></label>
                               <input value={c.first_name} onChange={(e) => updateCofounder(i, "first_name", e.target.value)}
                                 className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="type your answer here" />
                             </div>
                             <div>
-                              <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">last name <span className="text-red-400 ml-1">*</span></label>
+                              <label className="block font-sans font-medium text-[0.85rem] text-[#c5c3be] mb-2 max-sm:text-[0.9rem]">last name <span className="text-red-400 ml-1">*</span></label>
                               <input value={c.last_name} onChange={(e) => updateCofounder(i, "last_name", e.target.value)}
                                 className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="type your answer here" />
                             </div>
                           </div>
                           <div className="mb-4">
-                            <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">email <span className="text-red-400 ml-1">*</span></label>
+                            <label className="block font-sans font-medium text-[0.85rem] text-[#c5c3be] mb-2 max-sm:text-[0.9rem]">email <span className="text-red-400 ml-1">*</span></label>
                             <input type="email" value={c.email} onChange={(e) => updateCofounder(i, "email", e.target.value)}
                               className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="cofounder@example.com" />
                           </div>
                           <div>
-                            <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">what are 2 things they are most proud of? (this is not the time to be humble, plz brag!) <span className="text-red-400 ml-1">*</span></label>
+                            <label className="block font-sans font-medium text-[0.85rem] text-[#c5c3be] mb-2 max-sm:text-[0.9rem]">what are 2 things they are most proud of? (this is not the time to be humble, plz brag!) <span className="text-red-400 ml-1">*</span></label>
                             <textarea value={c.accomplishments} onChange={(e) => { if (e.target.value.length <= 350) updateCofounder(i, "accomplishments", e.target.value); }} rows={4}
                               className="w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none border border-white/[0.1] focus:border-white/[0.25] transition-colors resize-y placeholder:text-[#a09d98] max-sm:text-[1rem]" placeholder="type your answer here" />
                           </div>
@@ -543,12 +543,12 @@ function Sec({ id, title, children, onVisible }: {
 function F({ label, required, invalid, fieldError, children }: { label: string; required?: boolean; invalid?: boolean; fieldError?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">
+      <label className="block font-sans font-medium text-[0.85rem] text-[#c5c3be] mb-2 max-sm:text-[0.9rem]">
         {label}{required && <span className="text-red-400 ml-1">*</span>}
       </label>
       {children}
-      {fieldError && <p className="mt-1.5 font-sans font-light text-[0.75rem] text-red-400">{fieldError}</p>}
-      {!fieldError && invalid && <p className="mt-1.5 font-sans font-light text-[0.7rem] text-red-400/70">required</p>}
+      {fieldError && <p className="mt-1.5 font-sans font-light text-[0.8rem] text-red-400">{fieldError}</p>}
+      {!fieldError && invalid && <p className="mt-1.5 font-sans font-light text-[0.8rem] text-red-400/70">required</p>}
     </div>
   );
 }
@@ -579,7 +579,7 @@ function Ta({ value, onChange, placeholder, invalid, maxChars = 350 }: {
         className={`w-full px-4 py-3 pb-7 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none transition-colors resize-y placeholder:text-[#a09d98] max-sm:text-[1rem] max-sm:py-3.5 max-sm:pb-7 border ${
           invalid ? "border-red-500/60" : over ? "border-amber-500/50" : "border-white/[0.1] focus:border-white/[0.25]"
         }`} />
-      <span className={`absolute bottom-2.5 right-3.5 font-sans text-[0.6rem] pointer-events-none ${charCount > maxChars * 0.9 ? "text-amber-400/70" : "text-[#807d78]/40"}`}>{charCount}/{maxChars}</span>
+      <span className={`absolute bottom-2.5 right-3.5 font-sans text-[0.7rem] pointer-events-none ${charCount > maxChars * 0.9 ? "text-amber-400/70" : "text-[#807d78]/40"}`}>{charCount}/{maxChars}</span>
     </div>
   );
 }
