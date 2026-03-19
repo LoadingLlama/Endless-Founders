@@ -32,7 +32,7 @@ function PersonCard({ person }: { person: { name: string; title: string; img: st
         <img
           src={person.img}
           alt={person.name}
-          className="absolute inset-0 w-full h-full object-cover object-top grayscale brightness-110 contrast-[1.1] hover:grayscale-0 transition-all duration-500"
+          className="absolute inset-0 w-full h-full object-cover object-top grayscale brightness-110 contrast-[1.1]"
         />
       </div>
       <div className="flex items-center justify-between gap-2">
