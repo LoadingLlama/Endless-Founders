@@ -24,7 +24,7 @@ export default function Navbar() {
   return (
     <div
       className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-sm:top-3"
-      style={isHome ? { opacity: 0, animation: "fadeIn 0.4s ease 0.6s forwards" } : undefined}
+      style={undefined}
     >
       <nav
         className={`flex items-center gap-1.5 px-2.5 py-2 rounded-full transition-all duration-300 whitespace-nowrap max-sm:gap-0.5 max-sm:px-1.5 max-sm:py-1.5 ${
