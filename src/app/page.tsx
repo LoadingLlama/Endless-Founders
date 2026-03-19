@@ -6,6 +6,7 @@ import AboutSection from "@/components/AboutSection";
 import ProgramSection from "@/components/ProgramSection";
 import FAQSection from "@/components/FAQSection";
 import StatementSection from "@/components/StatementSection";
+import WhoSection from "@/components/WhoSection";
 import ApplySection from "@/components/ApplySection";
 import Footer from "@/components/Footer";
 import { useReveal } from "@/hooks/useReveal";
@@ -76,6 +77,7 @@ export default function Home() {
 
       {/* ─── SECTIONS ─── */}
       <AboutSection />
+      <WhoSection />
       <ProgramSection />
       <FAQSection />
       <ApplySection />

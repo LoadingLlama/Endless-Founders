@@ -19,7 +19,11 @@ const faqs = [
   },
   {
     q: "what does it cost?",
-    a: "details on pricing and any available fellowships will be shared during the application process.",
+    a: "nothing. endless founders is fully funded. we fly you out, and provide food and housing for the duration of the residency.",
+  },
+  {
+    q: "do you take equity?",
+    a: "no. we take zero equity in your company. the residency is completely free — no strings attached.",
   },
   {
     q: "where is it located?",
@@ -31,7 +35,7 @@ const faqs = [
   },
   {
     q: "what happens during the six weeks?",
-    a: "your time is yours. we provide the space, community, and structure — shared meals, weekly dinners, optional workshops, and access to mentors. the rest is deep work on your company.",
+    a: "your time is yours. we have tracks, mentors, and tailored resources available if you want them — but nothing is forced. shared meals, weekly dinners, and a community of founders who get it. the rest is deep work on your company.",
   },
   {
     q: "how do I apply?",

@@ -11,23 +11,12 @@ export default function AboutSection() {
           a residency for founders <em><strong>building the future.</strong></em>
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-sm:gap-10">
-          <div className="reveal reveal-delay-2">
-            <p className="font-sans font-light text-[0.95rem] leading-[1.8] text-[#c5c3be]">
-              endless founders brings together a small cohort of exceptional founders
-              for six weeks of deep work, shared meals, and honest conversation.
-              no pitch decks, no demo days — just the space and support to build
-              something that matters.
-            </p>
-          </div>
-
-          <div className="reveal reveal-delay-3">
-            <p className="font-sans font-light text-[0.95rem] leading-[1.8] text-[#c5c3be]">
-              we believe the best companies are built by founders who have room to
-              think clearly. the residency strips away distraction and replaces it
-              with community, craft, and conviction.
-            </p>
-          </div>
+        <div className="reveal reveal-delay-2 max-w-3xl">
+          <p className="font-sans font-light text-[0.95rem] leading-[1.8] text-[#c5c3be] mb-8">
+            six weeks. a small group of founders. one goal — build something real.
+            whether you have an idea or are already building, we cover flights, housing,
+            and food so you can focus entirely on your company.
+          </p>
         </div>
 
         {/* Divider */}

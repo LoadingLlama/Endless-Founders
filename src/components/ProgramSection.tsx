@@ -34,7 +34,7 @@ export default function ProgramSection() {
       <div className="max-w-5xl mx-auto">
 
         <h2 className="reveal reveal-delay-1 font-serif font-light text-[clamp(2.2rem,5vw,4rem)] tracking-[-0.02em] leading-[1.1] text-[#f0eeea] mb-20 max-w-3xl max-sm:mb-14">
-          everything you need. <em><strong>nothing you don&apos;t.</strong></em>
+          what to expect
         </h2>
 
         <div className="reveal space-y-0">
