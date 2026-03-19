@@ -180,6 +180,7 @@ export default function ApplyPage() {
     { key: "has_legal_entity", label: "legal entity", section: "your idea" },
     { key: "has_investment", label: "taken investment", section: "your idea" },
     { key: "fundraising", label: "fundraising", section: "your idea" },
+    { key: "full_time", label: "working full-time", section: "your commitment" },
     { key: "can_commit_6_weeks", label: "6-week commitment", section: "your commitment" },
     { key: "six_week_focus", label: "6-week focus", section: "your commitment" },
     { key: "other_commitments", label: "other summer plans", section: "your commitment" },
@@ -188,6 +189,10 @@ export default function ApplyPage() {
 
   function getMissingFields() {
     const missing = requiredFields.filter(({ key }) => {
+      // looking_for_cofounder is only required when has_cofounder is false
+      if (key === "looking_for_cofounder" && form.has_cofounder === true) return false;
+      // full_time is only required for active stages (not "i have an idea")
+      if (key === "full_time" && !isActive) return false;
       const val = form[key];
       if (val === null || val === undefined) return true;
       if (typeof val === "string" && val.trim() === "") return true;
@@ -215,11 +220,24 @@ export default function ApplyPage() {
 
   function handleSubmitClick() {
     setError("");
+    setFieldError({});
     const missing = getMissingFields();
     if (missing.length > 0) {
-      // Mark all required fields as touched so they show red outlines
-      setTouched(new Set(requiredFields.map((f) => f.key)));
-      scrollToSection(missing[0].section);
+      // Mark all required fields AND missing cofounder keys as touched so they show red outlines
+      const allKeys = new Set(requiredFields.map((f) => f.key));
+      for (const m of missing) allKeys.add(m.key);
+      setTouched(allKeys);
+      // Show error message listing what's missing
+      const labels = missing.slice(0, 3).map((m) => m.label).join(", ");
+      const extra = missing.length > 3 ? ` and ${missing.length - 3} more` : "";
+      setFieldError({ _general: `please fill out: ${labels}${extra}` });
+      // Scroll to the specific missing field, not the section
+      const fieldEl = document.getElementById(`field-${missing[0].key}`);
+      if (fieldEl) {
+        fieldEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        scrollToSection(missing[0].section);
+      }
       return;
     }
     handleConfirmedSubmit();
@@ -318,34 +336,34 @@ export default function ApplyPage() {
 
             {/* ── 1. YOUR EXPERIENCE ── */}
             <Sec id="your-experience" title="your experience" onVisible={() => setActiveSection("your experience")}>
-              <F label="first name" required invalid={isInvalid("first_name")} fieldError={fieldError.first_name}><In value={form.first_name as string} onChange={(v) => set("first_name", v)} invalid={isInvalid("first_name")} /></F>
-              <F label="last name" required invalid={isInvalid("last_name")} fieldError={fieldError.last_name}><In value={form.last_name as string} onChange={(v) => set("last_name", v)} invalid={isInvalid("last_name")} /></F>
-              <F label="email" required invalid={isInvalid("email")} fieldError={fieldError.email}><In type="email" value={form.email as string} onChange={(v) => set("email", v)} placeholder="you@example.com" invalid={isInvalid("email")} /></F>
-              <F label="age" required invalid={isInvalid("age")}><In value={form.age as string} onChange={(v) => set("age", v)} placeholder="e.g. 21" invalid={isInvalid("age")} /></F>
-              <F label="school" required invalid={isInvalid("school")}><In value={form.school as string} onChange={(v) => set("school", v)} placeholder="e.g. uc berkeley, n/a" invalid={isInvalid("school")} /></F>
-              <F label="major" required invalid={isInvalid("major")}><In value={form.major as string} onChange={(v) => set("major", v)} placeholder="e.g. computer science, n/a" invalid={isInvalid("major")} /></F>
-              <F label="where do you live currently?" required invalid={isInvalid("location")}><In value={form.location as string} onChange={(v) => set("location", v)} placeholder="e.g. san francisco, ca" invalid={isInvalid("location")} /></F>
-              <F label="linkedin" required invalid={isInvalid("linkedin")}><In value={form.linkedin as string} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/in/..." invalid={isInvalid("linkedin")} /></F>
+              <F id="field-first_name" label="first name" required invalid={isInvalid("first_name")} fieldError={fieldError.first_name}><In value={form.first_name as string} onChange={(v) => set("first_name", v)} invalid={isInvalid("first_name")} /></F>
+              <F id="field-last_name" label="last name" required invalid={isInvalid("last_name")} fieldError={fieldError.last_name}><In value={form.last_name as string} onChange={(v) => set("last_name", v)} invalid={isInvalid("last_name")} /></F>
+              <F id="field-email" label="email" required invalid={isInvalid("email")} fieldError={fieldError.email}><In type="email" value={form.email as string} onChange={(v) => set("email", v)} placeholder="you@example.com" invalid={isInvalid("email")} /></F>
+              <F id="field-age" label="age" required invalid={isInvalid("age")}><In value={form.age as string} onChange={(v) => set("age", v)} placeholder="e.g. 21" invalid={isInvalid("age")} /></F>
+              <F id="field-school" label="school" required invalid={isInvalid("school")}><In value={form.school as string} onChange={(v) => set("school", v)} placeholder="e.g. uc berkeley, n/a" invalid={isInvalid("school")} /></F>
+              <F id="field-major" label="major" required invalid={isInvalid("major")}><In value={form.major as string} onChange={(v) => set("major", v)} placeholder="e.g. computer science, n/a" invalid={isInvalid("major")} /></F>
+              <F id="field-location" label="where do you live currently?" required invalid={isInvalid("location")}><In value={form.location as string} onChange={(v) => set("location", v)} placeholder="e.g. san francisco, ca" invalid={isInvalid("location")} /></F>
+              <F id="field-linkedin" label="linkedin" required invalid={isInvalid("linkedin")}><In value={form.linkedin as string} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/in/..." invalid={isInvalid("linkedin")} /></F>
               <F label="x / twitter"><In value={form.twitter as string} onChange={(v) => set("twitter", v)} placeholder="https://x.com/..." /></F>
-              <F label="what are your 2-3 most important accomplishments over the past 3 years?" required invalid={isInvalid("accomplishments")}>
+              <F id="field-accomplishments" label="what are your 2-3 most important accomplishments over the past 3 years?" required invalid={isInvalid("accomplishments")}>
                 <Ta value={form.accomplishments as string} onChange={(v) => set("accomplishments", v)} placeholder="professional, personal, or academic — whatever you're most proud of" invalid={isInvalid("accomplishments")} maxChars={350} />
               </F>
-              <F label="what's your superpower? what skills do you bring?" required invalid={isInvalid("skills")}>
+              <F id="field-skills" label="what's your superpower? what skills do you bring?" required invalid={isInvalid("skills")}>
                 <Ta value={form.skills as string} onChange={(v) => set("skills", v)} placeholder="e.g. full-stack engineer, designer, sales, domain expertise" invalid={isInvalid("skills")} />
               </F>
-              <F label="what is one thing only you believe?" required invalid={isInvalid("one_belief")}>
+              <F id="field-one_belief" label="what is one thing only you believe?" required invalid={isInvalid("one_belief")}>
                 <Ta value={form.one_belief as string} onChange={(v) => set("one_belief", v)} placeholder="e.g. most productivity tools fail because they add complexity instead of removing it" invalid={isInvalid("one_belief")} />
               </F>
               <F label="past programs (accelerators, residencies, etc.)">
                 <In value={form.past_programs as string} onChange={(v) => set("past_programs", v)} placeholder="e.g. Y Combinator, Techstars, none" />
               </F>
-              <F label="do you have a cofounder?" required invalid={isInvalid("has_cofounder")}>
+              <F id="field-has_cofounder" label="do you have a cofounder?" required invalid={isInvalid("has_cofounder")}>
                 <Toggle value={form.has_cofounder as boolean | null} onChange={(v) => set("has_cofounder", v)} invalid={isInvalid("has_cofounder")} />
               </F>
 
               {form.has_cofounder === true && (
                 <div className="border-l-2 border-white/[0.1] pl-6 flex flex-col gap-6">
-                  <F label="cofounders" required invalid={isInvalid("cofounders")}>
+                  <F id="field-cofounders" label="cofounders" required invalid={isInvalid("cofounders")}>
                     <div className="flex flex-col gap-4">
                       {cofounders.map((c, i) => (
                         <div key={i} className="border border-white/[0.1] rounded-xl p-5">
@@ -383,18 +401,18 @@ export default function ApplyPage() {
                     <button onClick={addCofounder} className="font-sans text-[0.8rem] text-[#807d78] hover:text-[#f0eeea] transition-colors mt-1">+ add cofounder</button>
                   </F>
 
-                  <F label="how long have you known each other and how did you meet?" required invalid={isInvalid("cofounder_how_met")}>
+                  <F id="field-cofounder_how_met" label="how long have you known each other and how did you meet?" required invalid={isInvalid("cofounder_how_met")}>
                     <Ta value={form.cofounder_how_met as string} onChange={(v) => set("cofounder_how_met", v)} invalid={isInvalid("cofounder_how_met")} />
                   </F>
 
-                  <F label="how do you split responsibilities?" required invalid={isInvalid("cofounder_responsibilities")}>
+                  <F id="field-cofounder_responsibilities" label="how do you split responsibilities?" required invalid={isInvalid("cofounder_responsibilities")}>
                     <Ta value={form.cofounder_responsibilities as string} onChange={(v) => set("cofounder_responsibilities", v)} invalid={isInvalid("cofounder_responsibilities")} />
                   </F>
                 </div>
               )}
 
               {form.has_cofounder === false && (
-                <F label="are you looking for a cofounder?" required invalid={isInvalid("looking_for_cofounder")}>
+                <F id="field-looking_for_cofounder" label="are you looking for a cofounder?" required invalid={isInvalid("looking_for_cofounder")}>
                   <Toggle value={form.looking_for_cofounder as boolean | null} onChange={(v) => set("looking_for_cofounder", v)} invalid={isInvalid("looking_for_cofounder")} />
                 </F>
               )}
@@ -402,7 +420,7 @@ export default function ApplyPage() {
 
             {/* ── 2. YOUR IDEA ── */}
             <Sec id="your-idea" title="your idea" onVisible={() => setActiveSection("your idea")}>
-              <F label="where are you at right now?" required invalid={isInvalid("stage")}>
+              <F id="field-stage" label="where are you at right now?" required invalid={isInvalid("stage")}>
                 <div className={`flex flex-wrap gap-2 ${isInvalid("stage") ? "ring-1 ring-red-500/60 rounded-xl p-2 -m-2" : ""}`}>
                   {STAGES.map((s) => (
                     <button key={s} onClick={() => set("stage", s)}
@@ -412,35 +430,35 @@ export default function ApplyPage() {
                   ))}
                 </div>
               </F>
-              <F label="what's the ultimate vision you're building towards? 50 characters or less" required invalid={isInvalid("vision")}>
+              <F id="field-vision" label="what's the ultimate vision you're building towards? 50 characters or less" required invalid={isInvalid("vision")}>
                 <In value={form.vision as string} onChange={(v) => set("vision", v)} placeholder="e.g making life multiplanetary" invalid={isInvalid("vision")} maxLength={50} />
               </F>
-              <F label="describe what you're building or investigating in 50 characters or less" required invalid={isInvalid("building")}>
+              <F id="field-building" label="describe what you're building or investigating in 50 characters or less" required invalid={isInvalid("building")}>
                 <In value={form.building as string} onChange={(v) => set("building", v)} placeholder="e.g. ai tool that automates student workflows" invalid={isInvalid("building")} maxLength={50} />
               </F>
-              <F label="what problem are you solving?" required invalid={isInvalid("problem")}>
+              <F id="field-problem" label="what problem are you solving?" required invalid={isInvalid("problem")}>
                 <Ta value={form.problem as string} onChange={(v) => set("problem", v)} placeholder="what pain point or gap does your product address?" invalid={isInvalid("problem")} />
               </F>
-              <F label="why did you pick this idea to work on?" required invalid={isInvalid("why_this_idea")}>
+              <F id="field-why_this_idea" label="why did you pick this idea to work on?" required invalid={isInvalid("why_this_idea")}>
                 <Ta value={form.why_this_idea as string} onChange={(v) => set("why_this_idea", v)} placeholder="what drew you to this problem specifically?" invalid={isInvalid("why_this_idea")} />
               </F>
-              <F label="how do you know the world needs what you're making?" required invalid={isInvalid("world_needs")}>
+              <F id="field-world_needs" label="how do you know the world needs what you're making?" required invalid={isInvalid("world_needs")}>
                 <Ta value={form.world_needs as string} onChange={(v) => set("world_needs", v)} placeholder="what have you seen, heard, or experienced that tells you this matters?" invalid={isInvalid("world_needs")} />
               </F>
-              <F label="why are you the best person to build this?" required invalid={isInvalid("why_you")}>
+              <F id="field-why_you" label="why are you the best person to build this?" required invalid={isInvalid("why_you")}>
                 <Ta value={form.why_you as string} onChange={(v) => set("why_you", v)} placeholder="what unique experience, insight, or skill makes you the right founder for this?" invalid={isInvalid("why_you")} />
               </F>
-              <F label="who is this for?" required invalid={isInvalid("target_user")}>
+              <F id="field-target_user" label="who is this for?" required invalid={isInvalid("target_user")}>
                 <In value={form.target_user as string} onChange={(v) => set("target_user", v)} placeholder="e.g. college students juggling 3+ platforms for assignments, or freelance designers billing $5k+/mo" invalid={isInvalid("target_user")} />
               </F>
-              <F label="have you talked to potential users?" required invalid={isInvalid("talked_to_users")}>
+              <F id="field-talked_to_users" label="have you talked to potential users?" required invalid={isInvalid("talked_to_users")}>
                 <Toggle value={form.talked_to_users as boolean | null} onChange={(v) => set("talked_to_users", v)} invalid={isInvalid("talked_to_users")} />
               </F>
-<F label="have you formed any legal entity yet?" required invalid={isInvalid("has_legal_entity")}>
+<F id="field-has_legal_entity" label="have you formed any legal entity yet?" required invalid={isInvalid("has_legal_entity")}>
                 <p className="font-sans font-light text-[0.7rem] text-[#807d78] mb-2">this may be in the united states or another country.</p>
                 <Toggle value={form.has_legal_entity as boolean | null} onChange={(v) => set("has_legal_entity", v)} invalid={isInvalid("has_legal_entity")} />
               </F>
-              <F label="have you taken any investment?" required invalid={isInvalid("has_investment")}>
+              <F id="field-has_investment" label="have you taken any investment?" required invalid={isInvalid("has_investment")}>
                 <Toggle value={form.has_investment as boolean | null} onChange={(v) => set("has_investment", v)} invalid={isInvalid("has_investment")} />
               </F>
               {form.has_investment === true && (
@@ -453,7 +471,7 @@ export default function ApplyPage() {
                   </F>
                 </>
               )}
-              <F label="are you currently fundraising?" required invalid={isInvalid("fundraising")}>
+              <F id="field-fundraising" label="are you currently fundraising?" required invalid={isInvalid("fundraising")}>
                 <Toggle value={form.fundraising as boolean | null} onChange={(v) => set("fundraising", v)} invalid={isInvalid("fundraising")} />
               </F>
               <F label="how long have you been working on this?">
@@ -466,23 +484,23 @@ export default function ApplyPage() {
 
             {/* ── 3. YOUR COMMITMENT ── */}
             <Sec id="your-commitment" title="your commitment" onVisible={() => setActiveSection("your commitment")}>
-              <F label="can you commit to the full 6 weeks? (early june – mid august)" required invalid={isInvalid("can_commit_6_weeks")}>
+              <F id="field-can_commit_6_weeks" label="can you commit to the full 6 weeks? (early june – mid august)" required invalid={isInvalid("can_commit_6_weeks")}>
                 <Toggle value={form.can_commit_6_weeks as boolean | null} onChange={(v) => set("can_commit_6_weeks", v)} invalid={isInvalid("can_commit_6_weeks")} />
               </F>
-              <F label="are you working on this full-time?" required={isActive}>
-                <Toggle value={form.full_time as boolean | null} onChange={(v) => set("full_time", v)} />
+              <F id="field-full_time" label="are you working on this full-time?" required={isActive} invalid={isActive && isInvalid("full_time")}>
+                <Toggle value={form.full_time as boolean | null} onChange={(v) => set("full_time", v)} invalid={isActive && isInvalid("full_time")} />
               </F>
-              <F label="are you doing anything else this summer? (e.g. internship, job)" required invalid={isInvalid("other_commitments")}>
+              <F id="field-other_commitments" label="are you doing anything else this summer? (e.g. internship, job)" required invalid={isInvalid("other_commitments")}>
                 <Ta value={form.other_commitments as string} onChange={(v) => set("other_commitments", v)} placeholder="e.g. no — this is my full focus / yes, part-time internship at X" invalid={isInvalid("other_commitments")} />
               </F>
-              <F label="what would you focus on during the 6 weeks?" required invalid={isInvalid("six_week_focus")}>
+              <F id="field-six_week_focus" label="what would you focus on during the 6 weeks?" required invalid={isInvalid("six_week_focus")}>
                 <Ta value={form.six_week_focus as string} onChange={(v) => set("six_week_focus", v)} placeholder="specific milestones or goals you'd work towards" invalid={isInvalid("six_week_focus")} />
               </F>
             </Sec>
 
             {/* ── 4. HOW YOU FOUND US ── */}
             <Sec id="how-you-found-us" title="how you found us" onVisible={() => setActiveSection("how you found us")}>
-              <F label="how did you hear about the residency?" required invalid={isInvalid("how_heard")}>
+              <F id="field-how_heard" label="how did you hear about the residency?" required invalid={isInvalid("how_heard")}>
                 <select value={(form.how_heard as string) || ""} onChange={(e) => set("how_heard", e.target.value)}
                   className={`w-full px-4 py-3 font-sans font-light text-[0.9rem] text-[#f0eeea] bg-white/[0.12] rounded-xl outline-none transition-colors appearance-none max-sm:text-[1rem] max-sm:py-3.5 border ${
                     isInvalid("how_heard") ? "border-red-500/60" : "border-white/[0.1] focus:border-white/[0.25]"
@@ -540,9 +558,9 @@ function Sec({ id, title, children, onVisible }: {
   );
 }
 
-function F({ label, required, invalid, fieldError, children }: { label: string; required?: boolean; invalid?: boolean; fieldError?: string; children: React.ReactNode }) {
+function F({ id, label, required, invalid, fieldError, children }: { id?: string; label: string; required?: boolean; invalid?: boolean; fieldError?: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div id={id}>
       <label className="block font-sans font-medium text-[0.85rem] text-[#c5c3be] mb-2 max-sm:text-[0.9rem]">
         {label}{required && <span className="text-red-400 ml-1">*</span>}
       </label>
