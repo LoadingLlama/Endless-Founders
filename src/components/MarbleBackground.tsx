@@ -135,11 +135,19 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     const t0 = Date.now();
     let animId: number;
     let lastFrame = 0;
+    let visible = true;
     const FRAME_INTERVAL = 1000 / 30; // Cap at 30fps — marble is slow-moving
+
+    // Pause rendering when canvas is off screen
+    const io = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    io.observe(canvas);
 
     function render(now: number) {
       animId = requestAnimationFrame(render);
-      if (now - lastFrame < FRAME_INTERVAL) return;
+      if (!visible || now - lastFrame < FRAME_INTERVAL) return;
       lastFrame = now;
       const t = (Date.now() - t0) / 1000;
       gl!.uniform2f(uR, canvas!.width, canvas!.height);
@@ -152,6 +160,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     return () => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animId);
+      io.disconnect();
     };
   }, []);
 
