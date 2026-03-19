@@ -25,6 +25,7 @@ const HOW_HEARD_OPTIONS = ["instagram", "twitter", "linkedin", "email", "word of
 
 const STORAGE_KEY = "ef_application_form";
 const STORAGE_KEY_COFOUNDERS = "ef_application_cofounders";
+const STORAGE_KEY_SUBMITTED = "ef_application_submitted";
 
 /**
  * Loads saved form data from localStorage.
@@ -42,11 +43,15 @@ function loadSaved<T>(key: string, fallback: T): T {
 }
 
 export default function ApplyPage() {
-  const [activeSection, setActiveSection] = useState("about you");
+  const [activeSection, setActiveSection] = useState("your experience");
   const [form, setForm] = useState<FormData>({});
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try { return localStorage.getItem(STORAGE_KEY_SUBMITTED) === "true"; } catch { return false; }
+  });
   const [error, setError] = useState("");
+  const [fieldError, setFieldError] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const [cofounders, setCofounders] = useState<Cofounder[]>([emptyCofounder()]);
   const [saveLabel, setSaveLabel] = useState<"idle" | "saving" | "saved">("idle");
@@ -56,12 +61,13 @@ export default function ApplyPage() {
 
   // Load saved data from localStorage after hydration
   useEffect(() => {
+    if (submitted) return;
     const savedForm = loadSaved<FormData>(STORAGE_KEY, {});
     const savedCofounders = loadSaved<Cofounder[]>(STORAGE_KEY_COFOUNDERS, [emptyCofounder()]);
     if (Object.keys(savedForm).length > 0) setForm(savedForm);
     if (savedCofounders.length > 0) setCofounders(savedCofounders);
-    // Mark first render done after a tick so save effects skip the load
     requestAnimationFrame(() => { isFirstRender.current = false; });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-save form to localStorage on every change (skip initial render)
@@ -84,8 +90,6 @@ export default function ApplyPage() {
       setSaveLabel("saved");
     }, 400);
   }, [cofounders]);
-
-  useEffect(() => { isFirstRender.current = false; }, []);
 
   // Save before user leaves (tab close, navigate away)
   const saveToStorage = useCallback(() => {
@@ -144,7 +148,6 @@ export default function ApplyPage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  const [showConfirm, setShowConfirm] = useState(false);
 
   const requiredFields: { key: string; label: string; section: string }[] = [
     { key: "first_name", label: "first name", section: "your experience" },
@@ -214,12 +217,13 @@ export default function ApplyPage() {
       scrollToSection(missing[0].section);
       return;
     }
-    setShowConfirm(true);
+    handleConfirmedSubmit();
   }
 
   async function handleConfirmedSubmit() {
-    setShowConfirm(false);
     setSubmitting(true);
+    setFieldError({});
+    setError("");
     try {
       const res = await fetch("/api/apply", {
         method: "POST",
@@ -230,11 +234,26 @@ export default function ApplyPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "something went wrong"); setSubmitting(false); return; }
+      if (!res.ok) {
+        const err = data.error || "something went wrong";
+        // Map API errors to specific fields
+        if (err.includes("email")) {
+          setFieldError({ email: err });
+          scrollToSection("your experience");
+        } else if (err.includes("name")) {
+          setFieldError({ first_name: err });
+          scrollToSection("your experience");
+        } else {
+          setFieldError({ _general: err });
+        }
+        setSubmitting(false);
+        return;
+      }
       clearSavedData();
+      try { localStorage.setItem(STORAGE_KEY_SUBMITTED, "true"); } catch { /* silent */ }
       setSubmitted(true);
     } catch {
-      setError("failed to submit. please try again.");
+      setFieldError({ _general: "failed to submit. please try again." });
     }
     setSubmitting(false);
   }
@@ -243,6 +262,11 @@ export default function ApplyPage() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-8 max-sm:px-5">
         <div className="text-center max-w-md">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full border-2 border-green-400/60 flex items-center justify-center">
+            <svg className="w-8 h-8 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
           <h1 className="font-serif font-light text-[2.5rem] text-[#f0eeea] tracking-[-0.02em] mb-4 max-sm:text-[1.8rem]">application submitted</h1>
           <p className="font-sans font-light text-[1rem] text-[#c5c3be] leading-[1.7]">
             thanks for applying to endless founders. we&apos;ll review your application and get back to you soon.
@@ -282,15 +306,12 @@ export default function ApplyPage() {
             <p className="font-sans font-light text-[0.85rem] text-[#b5b3ae] mb-2">early june to mid august · cohort I</p>
             <p className="font-sans font-light text-[0.78rem] text-[#b5b3ae] mb-12">note: please don&apos;t include links except where we specifically ask. part of what we&apos;re evaluating is how well you can explain your work without leaning on external references.</p>
 
-            {error && (
-              <div className="mb-6 px-4 py-3 bg-red-900/20 border border-red-500/30 rounded-xl font-sans text-[0.85rem] text-red-400 hidden">{error}</div>
-            )}
 
             {/* ── 1. YOUR EXPERIENCE ── */}
             <Sec id="your-experience" title="your experience" onVisible={() => setActiveSection("your experience")}>
-              <F label="first name" required invalid={isInvalid("first_name")}><In value={form.first_name as string} onChange={(v) => set("first_name", v)} invalid={isInvalid("first_name")} /></F>
-              <F label="last name" required invalid={isInvalid("last_name")}><In value={form.last_name as string} onChange={(v) => set("last_name", v)} invalid={isInvalid("last_name")} /></F>
-              <F label="email" required invalid={isInvalid("email")}><In type="email" value={form.email as string} onChange={(v) => set("email", v)} placeholder="you@example.com" invalid={isInvalid("email")} /></F>
+              <F label="first name" required invalid={isInvalid("first_name")} fieldError={fieldError.first_name}><In value={form.first_name as string} onChange={(v) => set("first_name", v)} invalid={isInvalid("first_name")} /></F>
+              <F label="last name" required invalid={isInvalid("last_name")} fieldError={fieldError.last_name}><In value={form.last_name as string} onChange={(v) => set("last_name", v)} invalid={isInvalid("last_name")} /></F>
+              <F label="email" required invalid={isInvalid("email")} fieldError={fieldError.email}><In type="email" value={form.email as string} onChange={(v) => set("email", v)} placeholder="you@example.com" invalid={isInvalid("email")} /></F>
               <F label="age" required invalid={isInvalid("age")}><In value={form.age as string} onChange={(v) => set("age", v)} placeholder="e.g. 21" invalid={isInvalid("age")} /></F>
               <F label="school" required invalid={isInvalid("school")}><In value={form.school as string} onChange={(v) => set("school", v)} placeholder="e.g. uc berkeley, n/a" invalid={isInvalid("school")} /></F>
               <F label="major" required invalid={isInvalid("major")}><In value={form.major as string} onChange={(v) => set("major", v)} placeholder="e.g. computer science, n/a" invalid={isInvalid("major")} /></F>
@@ -471,6 +492,9 @@ export default function ApplyPage() {
 
             {/* Submit */}
             <div className="mt-16 mb-20 flex flex-col items-center gap-4">
+              {fieldError._general && (
+                <p className="font-sans font-light text-[0.85rem] text-red-400 mb-2">{fieldError._general}</p>
+              )}
               <button onClick={handleSubmitClick} disabled={submitting}
                 className="font-sans font-semibold text-[0.9rem] text-black bg-white px-10 py-3.5 rounded-full hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed max-sm:w-full max-sm:py-4">
                 {submitting ? "submitting..." : "submit application"}
@@ -480,27 +504,6 @@ export default function ApplyPage() {
               </p>
             </div>
 
-            {/* Confirmation modal */}
-            {showConfirm && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6">
-                <div className="bg-[#111] border border-white/[0.1] rounded-2xl p-8 max-w-md w-full text-center">
-                  <h3 className="font-serif font-light text-[1.4rem] text-[#f0eeea] mb-3">ready to submit?</h3>
-                  <p className="font-sans font-light text-[0.85rem] text-[#c5c3be] leading-[1.7] mb-8">
-                    please make sure everything looks good — you won&apos;t be able to edit after submitting.
-                  </p>
-                  <div className="flex gap-3 justify-center">
-                    <button onClick={() => setShowConfirm(false)}
-                      className="font-sans text-[0.85rem] text-[#807d78] px-6 py-2.5 rounded-full border border-white/[0.1] hover:border-white/[0.2] transition-colors">
-                      go back
-                    </button>
-                    <button onClick={handleConfirmedSubmit} disabled={submitting}
-                      className="font-sans font-semibold text-[0.85rem] text-black bg-white px-6 py-2.5 rounded-full hover:bg-white/90 transition-colors disabled:opacity-50">
-                      {submitting ? "submitting..." : "confirm & submit"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
         </main>
       </div>
     </div>
@@ -513,11 +516,13 @@ function Sec({ id, title, children, onVisible }: {
   id: string; title: string; children: React.ReactNode; onVisible: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  useState(() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) onVisible(); }, { rootMargin: "-30% 0px -60% 0px" });
-    setTimeout(() => { if (ref.current) obs.observe(ref.current); }, 100);
-  });
+    const timer = setTimeout(() => { if (ref.current) obs.observe(ref.current); }, 100);
+    return () => { clearTimeout(timer); obs.disconnect(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div ref={ref} id={id} className="mb-16 scroll-mt-20">
       <h2 className="font-serif font-light text-[1.5rem] text-[#f0eeea] tracking-[-0.01em] mb-8">{title}</h2>
@@ -526,14 +531,15 @@ function Sec({ id, title, children, onVisible }: {
   );
 }
 
-function F({ label, required, invalid, children }: { label: string; required?: boolean; invalid?: boolean; children: React.ReactNode }) {
+function F({ label, required, invalid, fieldError, children }: { label: string; required?: boolean; invalid?: boolean; fieldError?: string; children: React.ReactNode }) {
   return (
     <div>
       <label className="block font-sans font-medium text-[0.8rem] text-[#c5c3be] mb-2">
         {label}{required && <span className="text-red-400 ml-1">*</span>}
       </label>
       {children}
-      {invalid && <p className="mt-1.5 font-sans font-light text-[0.7rem] text-red-400/70">required</p>}
+      {fieldError && <p className="mt-1.5 font-sans font-light text-[0.75rem] text-red-400">{fieldError}</p>}
+      {!fieldError && invalid && <p className="mt-1.5 font-sans font-light text-[0.7rem] text-red-400/70">required</p>}
     </div>
   );
 }

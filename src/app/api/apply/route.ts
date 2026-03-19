@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     .from("applications")
     .select("email")
     .eq("email", email)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     return NextResponse.json(
@@ -42,8 +42,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Helper: trim string or null
-  const s = (key: string) => body[key]?.trim() || null;
+  // Helper: trim string, strip HTML tags, or null
+  const s = (key: string) => {
+    const val = body[key]?.trim();
+    if (!val) return null;
+    return val.replace(/<[^>]*>/g, "");
+  };
   const b = (key: string) => body[key] ?? null;
 
   const application = {

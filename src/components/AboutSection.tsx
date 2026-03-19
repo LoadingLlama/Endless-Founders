@@ -18,33 +18,25 @@ export default function AboutSection() {
           </p>
         </div>
 
-        {/* Team */}
+        {/* Key facts */}
         <div className="reveal reveal-delay-3 mt-20 pt-16 border-t border-white/[0.08]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-sm:gap-10">
-            <div>
-              <p className="font-sans font-light text-[0.65rem] tracking-[0.3em] text-[#807d78] mb-4">
-                organizers
-              </p>
-              <div className="space-y-2">
-                {["Henry", "Will", "Caden"].map((name) => (
-                  <p key={name} className="font-serif font-light text-[1.2rem] text-[#f0eeea] tracking-[-0.01em]">
-                    {name}
-                  </p>
-                ))}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 max-sm:gap-6">
+            {[
+              { label: "duration", value: "6 weeks" },
+              { label: "cohort size", value: "12–16 founders" },
+              { label: "season", value: "summer 2026" },
+              { label: "location", value: "tbd" },
+              { label: "equity", value: "$0" },
+            ].map((item) => (
+              <div key={item.label}>
+                <p className="font-sans font-light text-[0.65rem] tracking-[0.3em] text-[#807d78] mb-2">
+                  {item.label}
+                </p>
+                <p className="font-serif font-light text-[1.4rem] text-[#f0eeea] tracking-[-0.01em]">
+                  {item.value}
+                </p>
               </div>
-            </div>
-            <div>
-              <p className="font-sans font-light text-[0.65rem] tracking-[0.3em] text-[#807d78] mb-4">
-                advisors
-              </p>
-              <div className="space-y-2">
-                {["Andres Perez Soderi", "Ahmed"].map((name) => (
-                  <p key={name} className="font-serif font-light text-[1.2rem] text-[#f0eeea] tracking-[-0.01em]">
-                    {name}
-                  </p>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
