@@ -70,9 +70,9 @@ export default function AboutPage() {
           </h1>
 
           <p className="reveal reveal-delay-1 font-sans font-light text-[1.05rem] leading-[1.9] text-[#c5c3be] mb-20 max-w-2xl max-sm:text-[0.9rem] max-sm:mb-14">
-            six weeks. a small group of founders. one goal — build something real.
-            whether you have an idea or are already building, we cover flights, housing,
-            and food so you can focus entirely on your company.
+            too many founders build alone. we created endless founders to fix that — a
+            fully funded residency where builders live together, go deep, and make
+            something real. six weeks, no equity, no strings.
           </p>
 
           {/* Founders */}
