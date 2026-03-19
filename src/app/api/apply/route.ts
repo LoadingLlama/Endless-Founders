@@ -19,27 +19,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase();
-  if (!email || !email.includes("@") || !email.includes(".")) {
-    return NextResponse.json({ error: "valid email required" }, { status: 400 });
-  }
+  const email = body.email?.trim().toLowerCase() || null;
 
-  if (!body.first_name?.trim() || !body.last_name?.trim()) {
-    return NextResponse.json({ error: "name required" }, { status: 400 });
-  }
+  // Check for duplicate (only if email provided)
+  if (email) {
+    const { data: existing } = await supabase
+      .from("applications")
+      .select("email")
+      .eq("email", email)
+      .maybeSingle();
 
-  // Check for duplicate
-  const { data: existing } = await supabase
-    .from("applications")
-    .select("email")
-    .eq("email", email)
-    .maybeSingle();
-
-  if (existing) {
-    return NextResponse.json(
-      { error: "an application with this email already exists." },
-      { status: 409 }
-    );
+    if (existing) {
+      return NextResponse.json(
+        { error: "an application with this email already exists." },
+        { status: 409 }
+      );
+    }
   }
 
   // Helper: trim string, strip HTML tags, or null

@@ -221,25 +221,6 @@ export default function ApplyPage() {
   function handleSubmitClick() {
     setError("");
     setFieldError({});
-    const missing = getMissingFields();
-    if (missing.length > 0) {
-      // Mark all required fields AND missing cofounder keys as touched so they show red outlines
-      const allKeys = new Set(requiredFields.map((f) => f.key));
-      for (const m of missing) allKeys.add(m.key);
-      setTouched(allKeys);
-      // Show error message listing what's missing
-      const labels = missing.slice(0, 3).map((m) => m.label).join(", ");
-      const extra = missing.length > 3 ? ` and ${missing.length - 3} more` : "";
-      setFieldError({ _general: `please fill out: ${labels}${extra}` });
-      // Scroll to the specific missing field, not the section
-      const fieldEl = document.getElementById(`field-${missing[0].key}`);
-      if (fieldEl) {
-        fieldEl.scrollIntoView({ behavior: "smooth", block: "center" });
-      } else {
-        scrollToSection(missing[0].section);
-      }
-      return;
-    }
     handleConfirmedSubmit();
   }
 
