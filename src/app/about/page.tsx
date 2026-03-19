@@ -70,9 +70,11 @@ export default function AboutPage() {
           </h1>
 
           <p className="reveal reveal-delay-1 font-sans font-light text-[1.05rem] leading-[1.9] text-[#c5c3be] mb-20 max-w-2xl max-sm:text-[0.9rem] max-sm:mb-14">
-            too many founders build alone. we created endless founders to fix that — a
-            fully funded residency where builders live together, go deep, and make
-            something real. six weeks, no equity, no strings.
+            in a world that&apos;s moving online, real connection is disappearing.
+            too many founders build alone. we created endless founders to bring
+            people back together — a fully funded residency where builders live
+            side by side, go deep, and make something that lasts. six weeks, no
+            equity, no strings.
           </p>
 
           {/* Founders */}
