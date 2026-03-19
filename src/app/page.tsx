@@ -43,7 +43,7 @@ export default function Home() {
               href="/apply"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center font-sans font-medium text-[1.4rem] tracking-[0.01em] text-white border-b border-white/40 pb-px hover:border-white hover:-translate-y-[2px] transition-all duration-300 max-sm:text-[1.1rem] max-sm:min-h-[44px]"
+              className="inline-flex items-center justify-center font-sans font-medium text-[1.4rem] tracking-[0.01em] text-white border-b-2 border-white/40 pb-px hover:border-white hover:-translate-y-[2px] transition-all duration-300 max-sm:text-[1.1rem] max-sm:min-h-[44px]"
             >
               apply now
             </a>

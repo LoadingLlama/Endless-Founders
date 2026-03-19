@@ -9,7 +9,7 @@ export default function WhoSection() {
         <div className="reveal reveal-delay-1 rounded-2xl border border-white/[0.08] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-[#0a0a0a]">
 
           {/* Image */}
-          <div className="relative min-h-[320px] md:min-h-[420px] overflow-hidden">
+          <div className="relative min-h-[240px] md:min-h-[420px] overflow-hidden">
             <img
               src="/who-this-is-for.jpg"
               alt="Silhouettes in dramatic light"
@@ -28,7 +28,7 @@ export default function WhoSection() {
                 founders who can&apos;t stop <em className="text-[#f0eeea]">building.</em>
               </p>
               <p className="font-sans font-light text-[1.25rem] leading-[1.8] text-[#c5c3be] max-sm:text-[1.1rem]">
-                the ones who see what&apos;s broken and <em className="text-[#f0eeea]">have to fix it.</em>
+                the ones who see what&apos;s broken and <em className="text-[#f0eeea]">fix&nbsp;it.</em>
               </p>
               <p className="font-sans font-light text-[1.25rem] leading-[1.8] text-[#c5c3be] max-sm:text-[1.1rem]">
                 ambitious, relentless, and ready to go <em className="text-[#f0eeea]">all in.</em>
