@@ -24,14 +24,14 @@ export default function WhoSection() {
             </h2>
 
             <div className="space-y-6">
-              <p className="font-sans font-light text-[1.25rem] leading-[1.8] text-[#c5c3be] max-sm:text-[1.1rem]">
-                founders who can&apos;t stop <em className="text-[#f0eeea]">building.</em>
+              <p className="font-sans font-light text-[1.05rem] leading-[1.8] text-[#c5c3be] max-sm:text-[0.95rem]">
+                founders who see what the world <em className="text-[#f0eeea]">could be.</em>
               </p>
-              <p className="font-sans font-light text-[1.25rem] leading-[1.8] text-[#c5c3be] max-sm:text-[1.1rem]">
-                the ones who see what&apos;s broken and <em className="text-[#f0eeea]">fix&nbsp;it.</em>
+              <p className="font-sans font-light text-[1.05rem] leading-[1.8] text-[#c5c3be] max-sm:text-[0.95rem]">
+                the ones who won&apos;t wait for someone else to <em className="text-[#f0eeea]">build&nbsp;it.</em>
               </p>
-              <p className="font-sans font-light text-[1.25rem] leading-[1.8] text-[#c5c3be] max-sm:text-[1.1rem]">
-                ambitious, relentless, and ready to go <em className="text-[#f0eeea]">all in.</em>
+              <p className="font-sans font-light text-[1.05rem] leading-[1.8] text-[#c5c3be] max-sm:text-[0.95rem]">
+                ambitious, relentless, and ready to go <em className="text-[#f0eeea]">all&nbsp;in.</em>
               </p>
             </div>
           </div>
