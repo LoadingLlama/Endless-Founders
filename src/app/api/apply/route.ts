@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase() || null;
+  const email = body.email?.trim().toLowerCase() || "";
 
   // Check for duplicate (only if email provided)
-  if (email) {
+  if (email && email.includes("@")) {
     const { data: existing } = await supabase
       .from("applications")
       .select("email")
@@ -37,10 +37,10 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Helper: trim string, strip HTML tags, or null
+  // Helper: trim string, strip HTML tags — return empty string instead of null for NOT NULL columns
   const s = (key: string) => {
     const val = body[key]?.trim();
-    if (!val) return null;
+    if (!val) return "";
     return val.replace(/<[^>]*>/g, "");
   };
   const b = (key: string) => body[key] ?? null;
@@ -94,9 +94,14 @@ export async function POST(request: NextRequest) {
     anything_else: s("anything_else"),
   };
 
+  // Strip null values so Supabase uses column defaults instead of violating NOT NULL constraints
+  const cleaned = Object.fromEntries(
+    Object.entries(application).filter(([, v]) => v !== null && v !== undefined)
+  );
+
   const { error: insertError } = await supabase
     .from("applications")
-    .insert(application);
+    .insert(cleaned);
 
   if (insertError) {
     console.error("application insert error:", {
