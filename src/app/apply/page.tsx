@@ -8,7 +8,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
  * and 6-week commitment confirmation (June – mid/end July).
  */
 
-type FormData = Record<string, string | boolean | null>;
+type AppFormData = Record<string, string | boolean | null>;
+type ResumeState = { file: File | null; url: string | null; uploading: boolean; error: string | null };
 
 const STORAGE_KEY = "ef_application_form";
 const STORAGE_KEY_SUBMITTED = "ef_application_submitted";
@@ -29,12 +30,13 @@ function loadSaved<T>(key: string, fallback: T): T {
 }
 
 export default function ApplyPage() {
-  const [form, setForm] = useState<FormData>({});
+  const [form, setForm] = useState<AppFormData>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [error, setError] = useState("");
   const [fieldError, setFieldError] = useState<Record<string, string>>({});
+  const [resume, setResume] = useState<ResumeState>({ file: null, url: null, uploading: false, error: null });
   const [saveLabel, setSaveLabel] = useState<"idle" | "saving" | "saved">("idle");
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
@@ -48,7 +50,7 @@ export default function ApplyPage() {
         return;
       }
     } catch { /* silent */ }
-    const savedForm = loadSaved<FormData>(STORAGE_KEY, {});
+    const savedForm = loadSaved<AppFormData>(STORAGE_KEY, {});
     if (Object.keys(savedForm).length > 0) setForm(savedForm);
     requestAnimationFrame(() => { isFirstRender.current = false; });
     setHydrated(true);
@@ -102,12 +104,43 @@ export default function ApplyPage() {
       { key: "building", label: "what you're building" },
       { key: "can_commit_6_weeks", label: "6-week commitment" },
     ];
-    return required.filter(({ key }) => {
+    const missing = required.filter(({ key }) => {
       const val = form[key];
       if (val === null || val === undefined) return true;
       if (typeof val === "string" && val.trim() === "") return true;
       return false;
     });
+    if (!resume.url) {
+      missing.push({ key: "resume", label: "resume" });
+    }
+    return missing;
+  }
+
+  /**
+   * Handles resume file selection, validates, and uploads to /api/apply/upload.
+   */
+  async function handleResumeSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      setResume({ file: null, url: null, uploading: false, error: "only PDF files are accepted" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setResume({ file: null, url: null, uploading: false, error: "file too large (max 5MB)" });
+      return;
+    }
+    setResume({ file, url: null, uploading: true, error: null });
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/apply/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "upload failed");
+      setResume({ file, url: data.url, uploading: false, error: null });
+    } catch (err) {
+      setResume({ file: null, url: null, uploading: false, error: err instanceof Error ? err.message : "upload failed" });
+    }
   }
 
   function handleSubmitClick() {
@@ -132,7 +165,10 @@ export default function ApplyPage() {
       const res = await fetch("/api/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          ...(resume.url ? { resume_url: resume.url } : {}),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -202,6 +238,37 @@ export default function ApplyPage() {
           {/* LinkedIn */}
           <F label="linkedin" required>
             <In value={form.linkedin as string} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/in/..." />
+          </F>
+
+          {/* Resume */}
+          <F label="resume" required>
+            <div className="flex flex-col gap-2">
+              <label className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed transition-colors cursor-pointer min-h-[44px] ${
+                resume.url ? "border-green-400/40 bg-green-400/[0.06]" : "border-white/[0.15] bg-white/[0.06] hover:border-white/[0.25]"
+              }`}>
+                {resume.uploading ? (
+                  <span className="font-sans font-light text-[0.85rem] text-[#807d78]">uploading...</span>
+                ) : resume.url ? (
+                  <>
+                    <svg className="w-4 h-4 text-green-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    <span className="font-sans font-light text-[0.85rem] text-green-400 truncate">{resume.file?.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4 text-[#807d78] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                    <span className="font-sans font-light text-[0.85rem] text-[#807d78]">upload PDF (max 5MB)</span>
+                  </>
+                )}
+                <input type="file" accept=".pdf,application/pdf" onChange={handleResumeSelect} className="hidden" />
+              </label>
+              {resume.error && <p className="font-sans font-light text-[0.8rem] text-red-400">{resume.error}</p>}
+              {resume.url && (
+                <button type="button" onClick={() => setResume({ file: null, url: null, uploading: false, error: null })}
+                  className="font-sans text-[0.75rem] text-[#807d78] hover:text-red-400 transition-colors self-start">
+                  remove
+                </button>
+              )}
+            </div>
           </F>
 
           {/* What you're building / your idea — 500 words */}
