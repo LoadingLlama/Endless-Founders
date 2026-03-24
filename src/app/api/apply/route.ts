@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     linkedin: s("linkedin"),
     building: s("building"),
     can_commit_6_weeks: b("can_commit_6_weeks"),
+    resume_url: s("resume_url"),
   };
 
   // Strip null/undefined values so Supabase uses column defaults
