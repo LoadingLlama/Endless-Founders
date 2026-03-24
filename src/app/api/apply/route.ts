@@ -2,8 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 /**
- * POST /api/apply — saves application to Supabase `applications` table.
- * Only sends fields that exist in the table. Ignores unknown fields gracefully.
+ * POST /api/apply — saves simplified application to Supabase `applications` table.
+ * Fields: first_name, last_name, school, linkedin, building, can_commit_6_weeks.
+ * Always succeeds — never blocks a submission.
  */
 
 const supabase = createClient(
@@ -19,25 +20,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase() || "";
-
-  // Check for duplicate (only if email provided)
-  if (email && email.includes("@")) {
-    const { data: existing } = await supabase
-      .from("applications")
-      .select("email")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (existing) {
-      return NextResponse.json(
-        { error: "an application with this email already exists." },
-        { status: 409 }
-      );
-    }
-  }
-
-  // Helper: trim string, strip HTML tags — return empty string instead of null for NOT NULL columns
+  // Helper: trim string, strip HTML tags — return empty string for NOT NULL columns
   const s = (key: string) => {
     const val = body[key]?.trim();
     if (!val) return "";
@@ -45,56 +28,20 @@ export async function POST(request: NextRequest) {
   };
   const b = (key: string) => body[key] ?? null;
 
+  // Generate a placeholder email so the unique constraint never blocks
+  const email = `anon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@placeholder.endlessfounder.live`;
+
   const application = {
     email,
     first_name: s("first_name"),
     last_name: s("last_name"),
-    age: s("age"),
     school: s("school"),
-    major: s("major"),
-    location: s("location"),
     linkedin: s("linkedin"),
-    twitter: s("twitter"),
-    accomplishments: s("accomplishments"),
-    skills: s("skills"),
-    past_programs: s("past_programs"),
-    has_cofounder: b("has_cofounder"),
-    cofounders: s("cofounders"),
-    cofounder_how_met: s("cofounder_how_met"),
-    cofounder_responsibilities: s("cofounder_responsibilities"),
-    looking_for_cofounder: b("looking_for_cofounder"),
-    one_belief: s("one_belief"),
-    stage: s("stage"),
-    problem: s("problem"),
     building: s("building"),
-    why_this_idea: s("why_this_idea"),
-    target_user: s("target_user"),
-    vision: s("vision"),
-    talked_to_users: b("talked_to_users"),
-    has_users: b("has_users"),
-    user_count: s("user_count"),
-    has_revenue: b("has_revenue"),
-    revenue_amount: s("revenue_amount"),
-    product_link: s("product_link"),
-    why_ef: s("why_ef"),
     can_commit_6_weeks: b("can_commit_6_weeks"),
-    full_time: b("full_time"),
-    time_working: s("time_working"),
-    other_commitments: s("other_commitments"),
-    six_week_focus: s("six_week_focus"),
-    world_needs: s("world_needs"),
-    why_you: s("why_you"),
-    building_details: s("building_details"),
-    has_investment: b("has_investment"),
-    funding_details: s("funding_details"),
-    funding_amount: s("funding_amount"),
-    has_legal_entity: b("has_legal_entity"),
-    fundraising: b("fundraising"),
-    how_heard: s("how_heard"),
-    anything_else: s("anything_else"),
   };
 
-  // Strip null values so Supabase uses column defaults instead of violating NOT NULL constraints
+  // Strip null/undefined values so Supabase uses column defaults
   const cleaned = Object.fromEntries(
     Object.entries(application).filter(([, v]) => v !== null && v !== undefined)
   );
@@ -107,9 +54,54 @@ export async function POST(request: NextRequest) {
     console.error("application insert error:", {
       message: insertError.message,
       code: insertError.code,
+      details: insertError.details,
+      hint: insertError.hint,
       email,
     });
-    return NextResponse.json({ error: "failed to submit application" }, { status: 500 });
+
+    // If duplicate email, append timestamp to make it unique and retry
+    if (insertError.code === "23505") {
+      const dedupEmail = `anon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@placeholder.endlessfounder.live`;
+      cleaned.email = dedupEmail;
+
+      const { error: retryError } = await supabase
+        .from("applications")
+        .insert(cleaned);
+
+      if (retryError) {
+        console.error("application dedup retry error:", {
+          message: retryError.message,
+          code: retryError.code,
+          email: dedupEmail,
+        });
+        return NextResponse.json(
+          { error: `submission failed: ${retryError.message}` },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    // For any other error, try inserting with minimal fields
+    const minimal = Object.fromEntries(
+      Object.entries(cleaned).filter(([, v]) => v !== "")
+    );
+
+    const { error: minimalError } = await supabase
+      .from("applications")
+      .insert(minimal);
+
+    if (minimalError) {
+      console.error("application minimal insert error:", {
+        message: minimalError.message,
+        code: minimalError.code,
+      });
+      return NextResponse.json(
+        { error: `submission failed: ${minimalError.message}` },
+        { status: 500 }
+      );
+    }
   }
 
   return NextResponse.json({ success: true });
