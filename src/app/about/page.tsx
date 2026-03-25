@@ -82,7 +82,7 @@ export default function AboutPage() {
             <p className="font-serif font-light text-[1.6rem] text-[#f0eeea] tracking-[-0.01em] mb-8 max-sm:text-[1.3rem] max-sm:mb-6">
               Founders
             </p>
-            <div className="grid grid-cols-3 gap-6 max-sm:gap-3">
+            <div className="grid grid-cols-3 gap-6 max-sm:grid-cols-2 max-sm:gap-4">
               {founders.map((person) => (
                 <PersonCard key={person.name} person={person} />
               ))}
@@ -94,7 +94,7 @@ export default function AboutPage() {
             <p className="font-serif font-light text-[1.6rem] text-[#f0eeea] tracking-[-0.01em] mb-8 max-sm:text-[1.3rem] max-sm:mb-6">
               Advisors
             </p>
-            <div className="grid grid-cols-3 gap-6 max-sm:gap-3">
+            <div className="grid grid-cols-3 gap-6 max-sm:grid-cols-2 max-sm:gap-4">
               {advisors.map((person) => (
                 <PersonCard key={person.name} person={person} />
               ))}

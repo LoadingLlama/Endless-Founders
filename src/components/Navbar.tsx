@@ -35,10 +35,10 @@ export default function Navbar() {
     <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 max-sm:top-3 max-sm:left-3 max-sm:right-3 max-sm:translate-x-0">
       {/* Desktop nav */}
       <nav
-        className={`hidden md:flex items-center gap-1 px-3 py-2 rounded-full transition-all duration-500 whitespace-nowrap shadow-[0_4px_30px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)] ${
+        className={`hidden md:flex items-center gap-1 px-3 py-2.5 rounded-full transition-all duration-500 whitespace-nowrap border border-white/[0.12] shadow-[0_10px_50px_rgba(0,0,0,0.8),0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] ${
           scrolled
-            ? "bg-black/80 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08)]"
-            : "bg-white/[0.05] backdrop-blur-xl"
+            ? "bg-[#111]/90 backdrop-blur-2xl border-white/[0.15] shadow-[0_14px_60px_rgba(0,0,0,0.9),0_6px_25px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)]"
+            : "bg-[#111]/70 backdrop-blur-xl"
         }`}
       >
         <Link href="/" prefetch className={linkClass("/")}> home </Link>
@@ -72,7 +72,7 @@ export default function Navbar() {
           </a>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="text-white/80 w-10 h-10 flex items-center justify-center"
+            className="text-white/80 w-11 h-11 flex items-center justify-center"
             aria-label="Menu"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

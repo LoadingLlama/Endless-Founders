@@ -114,7 +114,7 @@ export default function ContactPage() {
             </button>
           </form>
 
-          <p className="reveal reveal-delay-2 font-sans font-light text-[0.75rem] text-[#807d78] mt-8">
+          <p className="reveal reveal-delay-2 font-sans font-light text-[0.85rem] text-[#807d78] mt-8">
             or email us directly at{" "}
             <a href="mailto:hello@endlessfounder.live" className="text-[#c5c3be] hover:text-white transition-colors">
               hello@endlessfounder.live

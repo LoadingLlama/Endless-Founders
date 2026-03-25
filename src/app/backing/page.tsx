@@ -111,7 +111,7 @@ export default function BackingPage() {
           </h2>
 
           <div className="reveal-scale mt-20 pt-16 border-t border-white/[0.08]">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-14 max-sm:gap-x-8 max-sm:gap-y-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-14 max-sm:gap-y-10">
               {[
                 { label: "access", value: "preferred visibility", detail: "first look at every idea built through the program" },
                 { label: "relationships", value: "direct access", detail: "meet and mentor founders during the residency" },
