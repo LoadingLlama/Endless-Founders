@@ -28,8 +28,11 @@ export async function POST(request: NextRequest) {
   };
   const b = (key: string) => body[key] ?? null;
 
-  // Generate a placeholder email so the unique constraint never blocks
-  const email = `anon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@placeholder.endlessfounder.live`;
+  // Use provided email, fall back to placeholder if missing
+  const providedEmail = s("email").toLowerCase();
+  const email = providedEmail && providedEmail.includes("@")
+    ? providedEmail
+    : `anon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@placeholder.endlessfounder.live`;
 
   const application = {
     email,

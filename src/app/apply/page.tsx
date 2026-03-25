@@ -99,6 +99,7 @@ export default function ApplyPage() {
     const required = [
       { key: "first_name", label: "first name" },
       { key: "last_name", label: "last name" },
+      { key: "email", label: "email" },
       { key: "school", label: "school" },
       { key: "linkedin", label: "linkedin" },
       { key: "building", label: "what you're building" },
@@ -229,6 +230,11 @@ export default function ApplyPage() {
               <In value={form.last_name as string} onChange={(v) => set("last_name", v)} placeholder="doe" />
             </F>
           </div>
+
+          {/* Email */}
+          <F label="email" required>
+            <In value={form.email as string} onChange={(v) => set("email", v)} placeholder="jane@berkeley.edu" type="email" />
+          </F>
 
           {/* School */}
           <F label="school" required>
