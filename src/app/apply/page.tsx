@@ -188,7 +188,20 @@ export default function ApplyPage() {
   }
 
   if (!hydrated) {
-    return <div className="min-h-screen bg-black" />;
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center px-8">
+        <div className="text-center">
+          <p className="font-sans font-light text-[1rem] text-[#c5c3be]">loading application...</p>
+          <noscript>
+            <p className="font-sans font-light text-[0.85rem] text-[#b5b3ae] mt-4">
+              this form requires javascript. please{" "}
+              <a href="https://endlessfounder.live/apply" className="underline text-white">open in your browser</a>{" "}
+              if it doesn&apos;t load.
+            </p>
+          </noscript>
+        </div>
+      </div>
+    );
   }
 
   if (submitted) {
