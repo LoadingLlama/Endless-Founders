@@ -28,6 +28,19 @@ export async function POST(request: NextRequest) {
   };
   const b = (key: string) => body[key] ?? null;
 
+  // Server-side validation: all fields required
+  const requiredFields = ["first_name", "last_name", "email", "school", "linkedin", "building"];
+  const missingFields = requiredFields.filter((f) => !body[f]?.trim());
+  if (missingFields.length > 0) {
+    return NextResponse.json({ error: `missing required fields: ${missingFields.join(", ")}` }, { status: 400 });
+  }
+  if (body.can_commit_6_weeks === null || body.can_commit_6_weeks === undefined) {
+    return NextResponse.json({ error: "missing required field: can_commit_6_weeks" }, { status: 400 });
+  }
+  if (!body.resume_url?.trim()) {
+    return NextResponse.json({ error: "resume is required" }, { status: 400 });
+  }
+
   // Use provided email, fall back to placeholder if missing
   const providedEmail = s("email").toLowerCase();
   const email = providedEmail && providedEmail.includes("@")
