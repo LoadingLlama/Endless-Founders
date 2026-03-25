@@ -72,16 +72,16 @@ export default function ProgramSection() {
 
 function BenefitCard({ benefit }: { benefit: { num: string; title: string; description: string } }) {
   return (
-    <div className="reveal bg-white/[0.95] backdrop-blur-sm rounded-2xl p-7 max-sm:p-5">
+    <div className="reveal bg-[#111] border border-white/[0.15] rounded-2xl p-7 max-sm:p-5 shadow-[0_10px_50px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] hover:border-white/[0.25] hover:shadow-[0_14px_60px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all duration-300">
       <div className="flex items-start justify-between mb-5">
-        <h3 className="font-sans font-bold text-[1.4rem] text-[#1a1a1a] tracking-[-0.01em] max-sm:text-[1.2rem]">
+        <h3 className="font-sans font-bold text-[1.4rem] text-white tracking-[-0.01em] max-sm:text-[1.2rem]">
           {benefit.title}
         </h3>
-        <span className="font-sans font-medium text-[0.8rem] text-[#1a1a1a]/30 shrink-0 ml-4">
+        <span className="font-sans font-medium text-[0.8rem] text-white/20 shrink-0 ml-4">
           {benefit.num}
         </span>
       </div>
-      <p className="font-sans font-light text-[0.9rem] leading-[1.7] text-[#1a1a1a]/60 max-sm:text-[0.85rem]">
+      <p className="font-sans font-light text-[0.9rem] leading-[1.7] text-white/50 max-sm:text-[0.85rem]">
         {benefit.description}
       </p>
     </div>
