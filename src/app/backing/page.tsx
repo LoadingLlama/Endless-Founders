@@ -135,22 +135,26 @@ export default function BackingPage() {
         </div>
       </section>
 
-      {/* ─── CTA (matching ApplySection style) ─── */}
-      <section className="relative z-20 bg-[#0a0a0a] py-32 px-8 max-sm:py-20 max-sm:px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="reveal font-serif font-light text-[clamp(2rem,4vw,3.5rem)] tracking-[-0.02em] leading-[1.1] text-[#f0eeea] mb-6">
-            interested in partnering?
-          </h2>
-          <p className="reveal reveal-delay-1 font-sans font-light text-[0.95rem] text-[#c5c3be] mb-10 max-sm:text-[0.85rem]">
-            we&apos;d love to hear from you.
-          </p>
-          <div className="reveal reveal-delay-2">
-            <a
-              href="/contact"
-              className="inline-flex items-center justify-center font-sans font-medium text-[1.1rem] tracking-[0.01em] text-white border-b-2 border-white/40 pb-px hover:border-white hover:-translate-y-[2px] transition-all duration-300 max-sm:text-[0.95rem] max-sm:min-h-[44px]"
-            >
-              get in touch
-            </a>
+      {/* ─── CTA ─── */}
+      <section className="relative z-20 bg-black px-8 py-20 max-sm:px-4 max-sm:py-12">
+        <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden min-h-[320px] flex items-center justify-center max-sm:min-h-[260px]">
+          <MarbleBackground className="absolute top-0 left-0 w-full h-full z-0" />
+          <div className="absolute inset-0 [background:radial-gradient(ellipse_at_center,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.2)_50%,transparent_80%)]" />
+          <div className="relative z-10 text-center px-8 py-16 max-sm:px-6 max-sm:py-12">
+            <h2 className="reveal font-serif font-light text-[clamp(2rem,5vw,3.5rem)] tracking-[-0.02em] leading-[1.1] text-[#f0eeea] mb-5 [text-shadow:0_4px_40px_rgba(0,0,0,0.8)]">
+              interested in partnering?
+            </h2>
+            <p className="reveal reveal-delay-1 font-sans font-light text-[0.95rem] leading-[1.8] text-[#d5d3ce] mb-10 [text-shadow:0_2px_15px_rgba(0,0,0,0.8)] max-sm:text-[0.85rem]">
+              we&apos;d love to hear from you.
+            </p>
+            <div className="reveal reveal-delay-2">
+              <a
+                href="/contact"
+                className="inline-flex items-center px-8 py-3 font-sans font-semibold text-[0.9rem] tracking-[0.02em] text-[#0a0a0a] bg-white rounded-full transition-all duration-300 hover:bg-white/90 active:scale-[0.97] min-h-[44px] max-sm:px-7 max-sm:py-3"
+              >
+                get in touch
+              </a>
+            </div>
           </div>
         </div>
       </section>
