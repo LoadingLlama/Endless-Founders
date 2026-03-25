@@ -4,7 +4,7 @@
  */
 export default function WhoSection() {
   return (
-    <section className="relative z-20 bg-black py-32 px-8 max-sm:py-20 max-sm:px-6">
+    <section className="relative z-20 bg-black pt-6 pb-44 px-8 max-sm:pt-4 max-sm:pb-28 max-sm:px-6">
       <div className="max-w-5xl mx-auto">
         <div className="reveal rounded-2xl border border-white/[0.25] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-[#0f0f0f] shadow-[0_10px_50px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.08)]">
 

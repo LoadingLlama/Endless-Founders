@@ -49,11 +49,8 @@ export default function ProgramSection() {
       <div className="relative z-10 py-32 px-8 max-sm:py-20 max-sm:px-5">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <p className="reveal font-sans font-medium text-[0.8rem] tracking-[0.15em] text-white/50 mb-6">
+          <h2 className="reveal font-serif font-light text-[clamp(3rem,7vw,5.5rem)] tracking-[-0.03em] leading-[1.05] text-white mb-16 max-sm:text-[clamp(2.2rem,10vw,3.5rem)] max-sm:mb-10 [text-shadow:0_4px_40px_rgba(0,0,0,0.5)]">
             benefits
-          </p>
-          <h2 className="reveal reveal-delay-1 font-serif font-light text-[clamp(3rem,7vw,5.5rem)] tracking-[-0.03em] leading-[1.05] text-white mb-16 max-sm:text-[clamp(2.2rem,10vw,3.5rem)] max-sm:mb-10 [text-shadow:0_4px_40px_rgba(0,0,0,0.5)]">
-            Benefits
           </h2>
 
           {/* Cards grid */}
