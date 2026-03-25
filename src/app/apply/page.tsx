@@ -218,7 +218,8 @@ export default function ApplyPage() {
         </div>
 
         <h1 className="font-serif font-light text-[2.2rem] text-[#f0eeea] tracking-[-0.02em] leading-none mb-1 max-sm:text-[1.6rem]">apply to endless founders</h1>
-        <p className="font-sans font-light text-[0.85rem] text-[#b5b3ae] mb-12">june – mid/end july · cohort I</p>
+        <p className="font-sans font-light text-[0.85rem] text-[#b5b3ae] mb-2">june – mid/end july · cohort I</p>
+        <p className="font-sans font-light text-[0.78rem] text-[#807d78] mb-12">currently only open to applicants based in the united states.</p>
 
         <div className="flex flex-col gap-8">
           {/* Name */}
