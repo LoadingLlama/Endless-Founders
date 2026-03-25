@@ -28,11 +28,11 @@ export default function AboutSection() {
               { label: "location", value: "tbd" },
               { label: "equity", value: "$0" },
             ].map((item) => (
-              <div key={item.label} className="border-l-2 border-white/[0.1] pl-5">
-                <p className="font-sans font-light text-[0.75rem] tracking-[0.2em] text-[#c5c3be] mb-3">
+              <div key={item.label} className="border-l-2 border-white/30 pl-6">
+                <p className="font-sans font-medium text-[0.8rem] tracking-[0.15em] text-white mb-3">
                   {item.label}
                 </p>
-                <p className="font-serif font-light text-[2rem] text-[#f0eeea] tracking-[-0.02em] max-sm:text-[1.6rem]">
+                <p className="font-serif font-light text-[2.4rem] text-white tracking-[-0.02em] max-sm:text-[1.8rem]">
                   {item.value}
                 </p>
               </div>
