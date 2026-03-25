@@ -187,52 +187,8 @@ export default function ApplyPage() {
     setSubmitting(false);
   }
 
-  // Detect in-app browsers (LinkedIn, Instagram, Facebook, etc.)
-  const [isInApp, setIsInApp] = useState(false);
-  useEffect(() => {
-    const ua = navigator.userAgent || "";
-    if (/LinkedInApp|FBAN|FBAV|Instagram|Line\/|Twitter/i.test(ua)) {
-      setIsInApp(true);
-    }
-  }, []);
-
   if (!hydrated) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center px-8">
-        <div className="text-center max-w-sm">
-          <p className="font-sans font-light text-[1rem] text-[#c5c3be] mb-4">loading application...</p>
-          <a href="https://endlessfounder.live/apply"
-            className="inline-block font-sans font-medium text-[0.85rem] text-black bg-white px-6 py-3 rounded-full mt-2">
-            open in browser
-          </a>
-          <noscript>
-            <p className="font-sans font-light text-[0.85rem] text-[#b5b3ae] mt-4">
-              this form requires javascript. please open in your browser.
-            </p>
-          </noscript>
-        </div>
-      </div>
-    );
-  }
-
-  if (isInApp) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center px-8 max-sm:px-5">
-        <div className="text-center max-w-sm">
-          <h1 className="font-serif font-light text-[1.8rem] text-[#f0eeea] tracking-[-0.02em] mb-4">endless founders</h1>
-          <p className="font-sans font-light text-[0.95rem] text-[#c5c3be] leading-[1.7] mb-6">
-            for the best experience, open this page in safari or chrome.
-          </p>
-          <p className="font-sans font-light text-[0.8rem] text-[#807d78] mb-6">
-            tap the ••• menu above and select &quot;Open in Safari&quot; or &quot;Open in Browser&quot;
-          </p>
-          <a href="https://endlessfounder.live/apply"
-            className="inline-block font-sans font-semibold text-[0.9rem] text-black bg-white px-8 py-3.5 rounded-full">
-            copy link
-          </a>
-        </div>
-      </div>
-    );
+    return <div className="min-h-screen bg-black" />;
   }
 
   if (submitted) {
