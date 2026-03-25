@@ -22,7 +22,7 @@ export function useReveal() {
     );
 
     function observeAll() {
-      document.querySelectorAll(".reveal:not(.visible)").forEach((el) => {
+      document.querySelectorAll(".reveal:not(.visible), .reveal-left:not(.visible), .reveal-scale:not(.visible)").forEach((el) => {
         observer.observe(el);
       });
     }

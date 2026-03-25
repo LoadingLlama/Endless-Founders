@@ -19,8 +19,8 @@ export default function AboutSection() {
         </div>
 
         {/* Key facts */}
-        <div className="reveal reveal-delay-3 mt-20 pt-16 border-t border-white/[0.08]">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 max-sm:gap-6">
+        <div className="reveal-scale mt-20 pt-16 border-t border-white/[0.08]">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-14 max-sm:gap-x-8 max-sm:gap-y-10">
             {[
               { label: "duration", value: "6 weeks" },
               { label: "cohort size", value: "12–16 founders" },
@@ -28,11 +28,11 @@ export default function AboutSection() {
               { label: "location", value: "tbd" },
               { label: "equity", value: "$0" },
             ].map((item) => (
-              <div key={item.label}>
-                <p className="font-sans font-light text-[0.65rem] tracking-[0.3em] text-[#807d78] mb-2">
+              <div key={item.label} className="border-l-2 border-white/[0.1] pl-5">
+                <p className="font-sans font-light text-[0.75rem] tracking-[0.2em] text-[#c5c3be] mb-3">
                   {item.label}
                 </p>
-                <p className="font-serif font-light text-[1.4rem] text-[#f0eeea] tracking-[-0.01em]">
+                <p className="font-serif font-light text-[2rem] text-[#f0eeea] tracking-[-0.02em] max-sm:text-[1.6rem]">
                   {item.value}
                 </p>
               </div>

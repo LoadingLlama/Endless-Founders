@@ -6,7 +6,7 @@ export default function WhoSection() {
   return (
     <section className="relative z-20 bg-black py-32 px-8 max-sm:py-20 max-sm:px-6">
       <div className="max-w-5xl mx-auto">
-        <div className="reveal reveal-delay-1 rounded-2xl border border-white/[0.08] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-[#0a0a0a]">
+        <div className="reveal rounded-2xl border border-white/[0.2] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-[#0a0a0a] shadow-[0_8px_60px_rgba(255,255,255,0.04)]">
 
           {/* Image */}
           <div className="relative min-h-[240px] md:min-h-[420px] overflow-hidden">

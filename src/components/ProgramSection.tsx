@@ -37,11 +37,11 @@ export default function ProgramSection() {
           what to expect
         </h2>
 
-        <div className="reveal space-y-0">
+        <div className="space-y-0">
           {pillars.map((pillar) => (
             <div
               key={pillar.title}
-              className="border-t border-white/[0.08] py-10 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4 md:gap-16"
+              className="reveal-left border-t border-white/[0.08] py-10 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4 md:gap-16"
             >
               <h3 className="font-serif font-light text-[1.6rem] text-[#f0eeea] tracking-[-0.01em] max-sm:text-[1.35rem]">
                 <span className="text-[#807d78] mr-3 text-[1rem]">{pillar.num}</span>

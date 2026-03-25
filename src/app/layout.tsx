@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -67,6 +68,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${outfit.variable}`}>
+        <SmoothScroll />
         {children}
       </body>
     </html>
