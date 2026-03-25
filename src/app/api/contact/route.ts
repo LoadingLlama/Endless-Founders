@@ -1,11 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { Resend } from "resend";
 
 /**
  * POST /api/contact — sends contact form message via Resend to hello@endlessfounder.live.
  */
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   let body;
@@ -24,6 +23,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const { Resend } = await import("resend");
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: "Endless Founders <hello@endlessfounder.live>",
       to: ["cadenchiang@berkeley.edu", "henrykiamilev@gmail.com", "williammirhashemi2029@u.northwestern.edu"],
