@@ -10,6 +10,10 @@ export default function SmoothScroll() {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Disable smooth scroll on mobile/touch devices to prevent jank
+    const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
+    if (isMobile) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
