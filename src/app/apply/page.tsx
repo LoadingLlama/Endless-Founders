@@ -11,8 +11,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 type AppFormData = Record<string, string | boolean | null>;
 type ResumeState = { file: File | null; url: string | null; uploading: boolean; error: string | null };
 
-const STORAGE_KEY = "ef_application_form";
-const STORAGE_KEY_SUBMITTED = "ef_application_submitted";
+const STORAGE_KEY = "ef_application_form_v2";
+const STORAGE_KEY_SUBMITTED = "ef_application_submitted_v2";
 
 /**
  * Loads saved form data from localStorage.
