@@ -304,7 +304,7 @@ export default function ApplyPage() {
             className="font-sans font-semibold text-[0.9rem] text-black bg-white px-10 py-3.5 rounded-full hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed max-sm:w-full max-sm:py-4">
             {submitting ? "submitting..." : "submit application"}
           </button>
-          <p className="font-sans font-light text-[0.7rem] text-[#807d78] max-sm:text-[0.65rem] max-sm:break-all">
+          <p className="font-sans font-light text-[0.75rem] text-[#807d78] max-sm:text-[0.75rem] max-sm:break-words">
             if you have any issues, email support@endlessfounder.live
           </p>
         </div>

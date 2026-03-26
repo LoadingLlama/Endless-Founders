@@ -13,6 +13,8 @@ export default function WhoSection() {
             <img
               src="/who-this-is-for.jpg"
               alt="Silhouettes in dramatic light"
+              width={600}
+              height={420}
               loading="lazy"
               decoding="async"
               className="absolute inset-0 w-full h-full object-cover"

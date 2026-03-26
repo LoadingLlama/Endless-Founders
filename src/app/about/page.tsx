@@ -32,6 +32,10 @@ function PersonCard({ person }: { person: { name: string; title: string; img: st
         <img
           src={person.img}
           alt={person.name}
+          width={400}
+          height={400}
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover object-center grayscale brightness-110 contrast-[1.1]"
         />
       </div>

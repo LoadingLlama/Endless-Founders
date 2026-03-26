@@ -98,10 +98,11 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     const gl = canvas.getContext("webgl", { alpha: false });
     if (!gl) return;
 
+    const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
+    const scale = isMobile ? 0.3 : 0.5;
+
     function resize() {
       if (!canvas || !gl) return;
-      // Render at half resolution — marble is soft/blurry by nature so no visible loss
-      const scale = 0.5;
       canvas.width = Math.round(canvas.clientWidth * scale);
       canvas.height = Math.round(canvas.clientHeight * scale);
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -136,7 +137,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     let animId: number;
     let lastFrame = 0;
     let visible = true;
-    const FRAME_INTERVAL = 1000 / 20; // Cap at 20fps
+    const FRAME_INTERVAL = 1000 / (isMobile ? 12 : 20);
 
     // Pause rendering when canvas is off screen
     const io = new IntersectionObserver(
