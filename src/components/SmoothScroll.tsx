@@ -5,17 +5,17 @@ import Lenis from "lenis";
 
 /**
  * Initializes Lenis smooth scrolling and a scroll progress bar.
+ * Dispatches a custom 'lenis-scroll' event so other components can pause during scroll.
  */
 export default function SmoothScroll() {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Disable smooth scroll on mobile/touch devices to prevent jank
     const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
     if (isMobile) return;
 
     const lenis = new Lenis({
-      duration: 0.6,
+      duration: 0.8,
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
     });
