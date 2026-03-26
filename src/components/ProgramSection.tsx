@@ -1,7 +1,5 @@
-import MarbleBackground from "@/components/MarbleBackground";
-
 /**
- * Benefits section — numbered cards over marble background.
+ * Benefits section — numbered cards over shared marble background.
  */
 
 const benefits = [
@@ -39,12 +37,15 @@ const benefits = [
 
 export default function ProgramSection() {
   return (
-    <section id="program" className="relative z-20 overflow-hidden">
-      {/* Marble background */}
-      <div className="absolute inset-0 z-0">
-        <MarbleBackground className="absolute top-0 left-0 w-full h-full" />
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
+    <section id="program" className="relative z-0 overflow-hidden">
+      {/* Dark overlay — shared fixed marble shows through behind */}
+      <div className="absolute inset-0 z-0 bg-black/40" />
+
+      {/* Top fade — black to transparent so it blends from the section above */}
+      <div className="absolute top-0 left-0 w-full h-[30%] z-[1] pointer-events-none [background:linear-gradient(to_bottom,rgb(0,0,0)_0%,rgba(0,0,0,0.7)_40%,transparent_100%)]" />
+
+      {/* Bottom fade — transparent to black so it blends into next section */}
+      <div className="absolute bottom-0 left-0 w-full h-[30%] z-[1] pointer-events-none [background:linear-gradient(to_top,rgb(0,0,0)_0%,rgba(0,0,0,0.7)_40%,transparent_100%)]" />
 
       <div className="relative z-10 py-32 px-8 max-sm:py-20 max-sm:px-5">
         <div className="max-w-5xl mx-auto">

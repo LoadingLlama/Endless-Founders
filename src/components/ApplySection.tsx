@@ -1,20 +1,13 @@
-"use client";
-
-import MarbleBackground from "@/components/MarbleBackground";
-
 /**
- * Final CTA section — rounded card reusing the hero's MarbleBackground component.
- * Taller card with animated marble and centered apply content.
+ * Final CTA section — rounded card with dark gradient background.
  */
 export default function ApplySection() {
   return (
     <section className="relative z-20 bg-black px-8 py-20 max-sm:px-4 max-sm:py-12">
       <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden min-h-[380px] flex items-center justify-center max-sm:min-h-[320px]">
-        {/* Reuse hero marble — animated, absolute positioning */}
-        <MarbleBackground className="absolute top-0 left-0 w-full h-full z-0" />
-
-        {/* Dark overlay for text contrast */}
-        <div className="absolute inset-0 [background:radial-gradient(ellipse_at_center,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.2)_50%,transparent_80%)]" />
+        {/* Dark marble-like gradient — replaces WebGL canvas for performance */}
+        <div className="absolute inset-0 z-0 [background:radial-gradient(ellipse_at_30%_40%,#2a2725_0%,#1a1917_30%,#111010_60%,#0a0a09_100%)]" />
+        <div className="absolute inset-0 z-0 [background:radial-gradient(ellipse_at_70%_60%,rgba(60,55,50,0.3)_0%,transparent_50%)]" />
 
         {/* Content */}
         <div className="relative z-10 text-center px-8 py-16 max-sm:px-6 max-sm:py-12">

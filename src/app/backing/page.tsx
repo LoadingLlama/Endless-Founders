@@ -15,9 +15,11 @@ export default function BackingPage() {
     <>
       <Navbar />
 
+      {/* Single shared marble — fixed behind everything */}
+      <MarbleBackground className="fixed top-0 left-0 w-full h-full z-0" />
+
       {/* ─── HERO ─── */}
-      <section className="relative h-[70vh] overflow-hidden max-sm:h-[60vh]" style={{ willChange: "transform" }}>
-        <MarbleBackground className="absolute top-0 left-0 w-full h-full z-0" />
+      <section className="relative z-10 h-[70vh] overflow-hidden max-sm:h-[60vh]">
 
         {/* Bottom fade */}
         <div className="absolute bottom-0 left-0 w-full h-[45%] z-[3] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.5)_40%,rgba(0,0,0,0.9)_80%,rgb(0,0,0)_100%)]" />
@@ -138,8 +140,9 @@ export default function BackingPage() {
       {/* ─── CTA ─── */}
       <section className="relative z-20 bg-black px-8 py-20 max-sm:px-4 max-sm:py-12">
         <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden min-h-[320px] flex items-center justify-center max-sm:min-h-[260px]">
-          <MarbleBackground className="absolute top-0 left-0 w-full h-full z-0" />
-          <div className="absolute inset-0 [background:radial-gradient(ellipse_at_center,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.2)_50%,transparent_80%)]" />
+          {/* Dark marble-like gradient — replaces WebGL canvas for performance */}
+          <div className="absolute inset-0 z-0 [background:radial-gradient(ellipse_at_30%_40%,#2a2725_0%,#1a1917_30%,#111010_60%,#0a0a09_100%)]" />
+          <div className="absolute inset-0 z-0 [background:radial-gradient(ellipse_at_70%_60%,rgba(60,55,50,0.3)_0%,transparent_50%)]" />
           <div className="relative z-10 text-center px-8 py-16 max-sm:px-6 max-sm:py-12">
             <h2 className="reveal font-serif font-light text-[clamp(2rem,5vw,3.5rem)] tracking-[-0.02em] leading-[1.1] text-[#f0eeea] mb-5 [text-shadow:0_4px_40px_rgba(0,0,0,0.8)]">
               interested in partnering?

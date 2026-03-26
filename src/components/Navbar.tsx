@@ -14,10 +14,17 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    let ticking = false;
     function onScroll() {
-      setScrolled(window.scrollY > 80);
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 80);
+          ticking = false;
+        });
+      }
     }
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -37,8 +44,8 @@ export default function Navbar() {
       <nav
         className={`hidden md:flex items-center gap-1 px-3 py-2.5 rounded-full transition-all duration-500 whitespace-nowrap border border-white/[0.12] shadow-[0_10px_50px_rgba(0,0,0,0.8),0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] ${
           scrolled
-            ? "bg-[#111]/90 backdrop-blur-2xl border-white/[0.15] shadow-[0_14px_60px_rgba(0,0,0,0.9),0_6px_25px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)]"
-            : "bg-[#111]/70 backdrop-blur-xl"
+            ? "bg-[#111]/95 border-white/[0.15] shadow-[0_14px_60px_rgba(0,0,0,0.9),0_6px_25px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)]"
+            : "bg-[#111]/85"
         }`}
       >
         <Link href="/" prefetch className={linkClass("/")}> home </Link>
@@ -59,8 +66,8 @@ export default function Navbar() {
       <div className="md:hidden">
         <div className={`flex items-center justify-between px-4 py-2.5 rounded-full transition-all duration-500 shadow-[0_4px_30px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)] ${
           scrolled || menuOpen
-            ? "bg-black/80 backdrop-blur-2xl"
-            : "bg-white/[0.05] backdrop-blur-xl"
+            ? "bg-[#111]/95"
+            : "bg-[#111]/80"
         }`}>
           <a
             href="/apply"
@@ -95,7 +102,7 @@ export default function Navbar() {
         <div className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           menuOpen ? "max-h-[300px] mt-2" : "max-h-0"
         }`}>
-          <div className="bg-black/80 backdrop-blur-2xl rounded-2xl py-3 px-2 shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.06)] flex flex-col gap-0.5">
+          <div className="bg-[#111]/95 rounded-2xl py-3 px-2 shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.06)] flex flex-col gap-0.5">
             {[
               { href: "/", label: "home" },
               { href: "/about", label: "about us" },

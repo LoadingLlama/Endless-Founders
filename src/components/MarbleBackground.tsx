@@ -33,7 +33,7 @@ float fbm(vec3 p){
     float v=0.0;
     float a=0.5;
     vec3 shift=vec3(100.0);
-    for(int i=0;i<4;i++){
+    for(int i=0;i<3;i++){
         v+=a*noise(p);
         p=p*2.0+shift;
         a*=0.5;
@@ -45,7 +45,7 @@ void main(){
     vec2 uv=gl_FragCoord.xy/R;
     float asp=R.x/R.y;
     vec2 p=vec2(uv.x*asp, uv.y)*1.2;
-    float t=T*0.012;
+    float t=T*0.035;
     float n1=fbm(vec3(p*0.8, t*0.5));
     float n2=fbm(vec3(p*0.8+vec2(5.2,1.3), t*0.4));
     vec2 q=vec2(n1, n2);
@@ -100,10 +100,10 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
 
     function resize() {
       if (!canvas || !gl) return;
-      // Cap at 1x DPR to reduce GPU load — visual difference is negligible on marble
-      const dpr = 1;
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
+      // Render at half resolution — marble is soft/blurry by nature so no visible loss
+      const scale = 0.5;
+      canvas.width = Math.round(canvas.clientWidth * scale);
+      canvas.height = Math.round(canvas.clientHeight * scale);
       gl.viewport(0, 0, canvas.width, canvas.height);
     }
 
@@ -136,7 +136,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     let animId: number;
     let lastFrame = 0;
     let visible = true;
-    const FRAME_INTERVAL = 1000 / 30; // Cap at 30fps — marble is slow-moving
+    const FRAME_INTERVAL = 1000 / 20; // Cap at 20fps
 
     // Pause rendering when canvas is off screen
     const io = new IntersectionObserver(
@@ -168,7 +168,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ willChange: "transform" }}
+      style={{ contain: "strict" }}
     />
   );
 }
