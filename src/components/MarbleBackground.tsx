@@ -233,7 +233,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ imageRendering: "auto", willChange: "transform", transform: "translateZ(0)" }}
+      style={{ imageRendering: "auto", willChange: "transform" }}
     />
   );
 }
