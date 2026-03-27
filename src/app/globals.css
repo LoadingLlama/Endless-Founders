@@ -17,7 +17,6 @@ body {
   min-height: 100dvh;
   background: #000;
   overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Prevent iOS input zoom — Safari zooms inputs with font-size < 16px */
