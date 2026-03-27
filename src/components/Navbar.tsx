@@ -40,8 +40,7 @@ export default function Navbar() {
 
   return (
     <div
-      style={{ position: "fixed", left: 0, right: 0, zIndex: 9999 }}
-      className="top-[max(12px,env(safe-area-inset-top))] px-3 sm:top-5 sm:px-0 sm:left-1/2 sm:right-auto sm:-translate-x-1/2"
+      className="fixed top-[max(12px,env(safe-area-inset-top))] left-0 right-0 z-[9999] px-3 md:top-5 md:px-0 md:left-1/2 md:right-auto md:-translate-x-1/2"
     >
       {/* Desktop nav */}
       <nav
