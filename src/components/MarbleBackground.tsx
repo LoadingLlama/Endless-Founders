@@ -101,7 +101,7 @@ void main(){
  *
  * @param className - Tailwind classes for positioning.
  */
-export default function MarbleBackground({ className = "fixed top-0 left-0 w-full h-full z-0" }: { className?: string }) {
+export default function MarbleBackground({ className = "fixed top-0 left-0 w-full z-0" }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [webglFailed, setWebglFailed] = useState(false);
 
@@ -119,10 +119,17 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const scale = isMobile ? 0.4 * dpr : 0.5;
 
+    let lastWidth = 0;
+
     function resize() {
       if (!canvas || !gl) return;
-      canvas.width = Math.round(canvas.clientWidth * scale);
-      canvas.height = Math.round(canvas.clientHeight * scale);
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      // On mobile, ignore height-only changes (iOS Safari URL bar collapse)
+      if (isMobile && lastWidth === w && canvas.width > 0) return;
+      lastWidth = w;
+      canvas.width = Math.round(w * scale);
+      canvas.height = Math.round(h * scale);
       gl.viewport(0, 0, canvas.width, canvas.height);
     }
 
@@ -224,6 +231,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
         className={className}
         style={{
           background: "radial-gradient(ellipse at 30% 40%, #2a2725 0%, #1a1917 30%, #111010 60%, #0a0a09 100%)",
+          height: "100dvh",
         }}
       />
     );
@@ -233,7 +241,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ imageRendering: "auto", willChange: "transform" }}
+      style={{ imageRendering: "auto", height: "100dvh" }}
     />
   );
 }
