@@ -3,7 +3,7 @@
  */
 export default function ApplySection() {
   return (
-    <section className="relative z-20 bg-black px-8 py-20 max-sm:px-4 max-sm:py-12">
+    <section className="relative z-20 bg-black px-8 pt-8 pb-20 max-sm:px-4 max-sm:pt-4 max-sm:pb-12">
       <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden min-h-[380px] flex items-center justify-center max-sm:min-h-[320px]">
         {/* Dark marble-like gradient — replaces WebGL canvas for performance */}
         <div className="absolute inset-0 z-0 [background:radial-gradient(ellipse_at_30%_40%,#2a2725_0%,#1a1917_30%,#111010_60%,#0a0a09_100%)]" />
