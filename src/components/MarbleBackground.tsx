@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const VERTEX_SHADER = `attribute vec2 p; void main(){gl_Position=vec4(p,0,1);}`;
 
+/**
+ * Fragment shader for procedural marble texture.
+ * Uses mediump precision for Safari mobile compatibility with highp fallback.
+ */
 const FRAGMENT_SHADER = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
+#else
+precision mediump float;
+#endif
 uniform vec2 R;
 uniform float T;
 
@@ -88,18 +96,27 @@ void main(){
 }
 `;
 
+/**
+ * Animated WebGL marble background with CSS gradient fallback for unsupported browsers.
+ *
+ * @param className - Tailwind classes for positioning.
+ */
 export default function MarbleBackground({ className = "fixed top-0 left-0 w-full h-full z-0" }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webglFailed, setWebglFailed] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const gl = canvas.getContext("webgl", { alpha: false });
-    if (!gl) return;
+    if (!gl) {
+      setWebglFailed(true);
+      return;
+    }
 
     const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
-    const scale = isMobile ? 0.3 : 0.5;
+    const scale = 0.5;
 
     function resize() {
       if (!canvas || !gl) return;
@@ -115,13 +132,31 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
       const s = gl!.createShader(type)!;
       gl!.shaderSource(s, src);
       gl!.compileShader(s);
+      if (!gl!.getShaderParameter(s, gl!.COMPILE_STATUS)) {
+        console.error("Shader compile error:", gl!.getShaderInfoLog(s));
+        return null;
+      }
       return s;
     }
 
+    const vs = makeShader(gl.VERTEX_SHADER, VERTEX_SHADER);
+    const fs = makeShader(gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
+    if (!vs || !fs) {
+      setWebglFailed(true);
+      return;
+    }
+
     const prog = gl.createProgram()!;
-    gl.attachShader(prog, makeShader(gl.VERTEX_SHADER, VERTEX_SHADER));
-    gl.attachShader(prog, makeShader(gl.FRAGMENT_SHADER, FRAGMENT_SHADER));
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
     gl.linkProgram(prog);
+
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.error("Program link error:", gl.getProgramInfoLog(prog));
+      setWebglFailed(true);
+      return;
+    }
+
     gl.useProgram(prog);
 
     const buf = gl.createBuffer();
@@ -137,6 +172,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     let animId: number;
     let lastFrame = 0;
     let visible = true;
+    let contextLost = false;
     const FRAME_INTERVAL = 1000 / (isMobile ? 12 : 20);
 
     // Pause rendering when canvas is off screen
@@ -146,9 +182,22 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     );
     io.observe(canvas);
 
+    // Handle WebGL context loss (Safari tab switch, low memory)
+    function onContextLost(e: Event) {
+      e.preventDefault();
+      contextLost = true;
+      cancelAnimationFrame(animId);
+    }
+    function onContextRestored() {
+      contextLost = false;
+      animId = requestAnimationFrame(render);
+    }
+    canvas.addEventListener("webglcontextlost", onContextLost);
+    canvas.addEventListener("webglcontextrestored", onContextRestored);
+
     function render(now: number) {
       animId = requestAnimationFrame(render);
-      if (!visible || now - lastFrame < FRAME_INTERVAL) return;
+      if (!visible || contextLost || now - lastFrame < FRAME_INTERVAL) return;
       lastFrame = now;
       const t = (Date.now() - t0) / 1000;
       gl!.uniform2f(uR, canvas!.width, canvas!.height);
@@ -160,16 +209,29 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
 
     return () => {
       window.removeEventListener("resize", resize);
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      canvas.removeEventListener("webglcontextrestored", onContextRestored);
       cancelAnimationFrame(animId);
       io.disconnect();
     };
   }, []);
 
+  // CSS gradient fallback when WebGL is unavailable or shader fails
+  if (webglFailed) {
+    return (
+      <div
+        className={className}
+        style={{
+          background: "radial-gradient(ellipse at 30% 40%, #2a2725 0%, #1a1917 30%, #111010 60%, #0a0a09 100%)",
+        }}
+      />
+    );
+  }
+
   return (
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ contain: "strict" }}
     />
   );
 }

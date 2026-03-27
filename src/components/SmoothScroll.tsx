@@ -14,10 +14,14 @@ export default function SmoothScroll() {
     const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
     if (isMobile) return;
 
+    // Detect Safari — it handles scroll differently
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     const lenis = new Lenis({
-      duration: 0.8,
+      duration: isSafari ? 0.6 : 0.8,
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
+      touchMultiplier: 1.5,
     });
 
     lenis.on("scroll", () => {

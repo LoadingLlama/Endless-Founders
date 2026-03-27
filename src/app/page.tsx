@@ -22,7 +22,7 @@ export default function Home() {
       <MarbleBackground className="fixed top-0 left-0 w-full h-full z-0" />
 
       {/* ─── HERO ─── */}
-      <section className="relative z-10 h-dvh overflow-hidden max-sm:h-[calc(100vh-20px)]">
+      <section className="relative z-10 h-screen overflow-hidden" style={{ height: "100dvh" }}>
 
         {/* Bottom fade — smooth to black so it blends into next section */}
         <div className="absolute bottom-0 left-0 w-full h-[45%] z-[3] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.5)_40%,rgba(0,0,0,0.9)_80%,rgb(0,0,0)_100%)]" />

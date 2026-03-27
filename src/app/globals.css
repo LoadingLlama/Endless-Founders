@@ -14,8 +14,17 @@ html {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #000;
   overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent iOS input zoom — Safari zooms inputs with font-size < 16px */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select {
+    font-size: max(16px, 1em);
+  }
 }
 
 /* Subtle noise grain overlay on entire page — promoted to own GPU layer */
