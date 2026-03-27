@@ -39,7 +39,7 @@ export default function Navbar() {
     }`;
 
   return (
-    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 max-sm:top-3 max-sm:left-3 max-sm:right-3 max-sm:translate-x-0">
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 max-sm:top-0 max-sm:left-0 max-sm:right-0 max-sm:translate-x-0 max-sm:px-3 max-sm:pt-[max(12px,env(safe-area-inset-top))]">
       {/* Desktop nav */}
       <nav
         className={`hidden md:flex items-center gap-1 px-3 py-2.5 rounded-full transition-all duration-500 whitespace-nowrap border border-white/[0.12] shadow-[0_10px_50px_rgba(0,0,0,0.8),0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] ${
