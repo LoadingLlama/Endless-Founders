@@ -116,7 +116,8 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     }
 
     const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
-    const scale = 0.5;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const scale = isMobile ? 0.4 * dpr : 0.5;
 
     function resize() {
       if (!canvas || !gl) return;
@@ -173,7 +174,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     let lastFrame = 0;
     let visible = true;
     let contextLost = false;
-    const FRAME_INTERVAL = 1000 / (isMobile ? 12 : 20);
+    const FRAME_INTERVAL = 1000 / (isMobile ? 20 : 20);
 
     // Pause rendering when canvas is off screen
     const io = new IntersectionObserver(
@@ -232,6 +233,7 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     <canvas
       ref={canvasRef}
       className={className}
+      style={{ imageRendering: "auto" }}
     />
   );
 }
