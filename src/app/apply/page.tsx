@@ -147,11 +147,6 @@ export default function ApplyPage() {
   function handleSubmitClick() {
     setError("");
     setFieldError({});
-    const missing = getMissingFields();
-    if (missing.length > 0) {
-      setFieldError({ _general: `please fill in: ${missing.map((m) => m.label).join(", ")}` });
-      return;
-    }
     handleConfirmedSubmit();
   }
 
