@@ -23,7 +23,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "endless founders",
   description:
-    "Endless Founders is a 6-week founder residency. Join the waitlist for updates and early access.",
+    "Endless Founders is a 6-week founder residency. Applications open now.",
   other: {
     "theme-color": "#000000",
   },
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Endless Founders",
     description:
-      "A 6-week founder residency. Applications opening soon.",
+      "A 6-week founder residency. Applications open now.",
     url: "https://endlessfounder.live",
     siteName: "Endless Founders",
     type: "website",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Endless Founders",
     description:
-      "A 6-week founder residency. Applications opening soon.",
+      "A 6-week founder residency. Applications open now.",
     images: ["https://endlessfounder.live/og-image.png"],
   },
 };

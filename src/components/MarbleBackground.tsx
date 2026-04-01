@@ -116,8 +116,8 @@ export default function MarbleBackground({ className = "fixed top-0 left-0 w-ful
     }
 
     const isMobile = window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const scale = isMobile ? 0.4 * dpr : 0.5;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const scale = isMobile ? dpr : 0.5;
 
     let lastWidth = 0;
 
