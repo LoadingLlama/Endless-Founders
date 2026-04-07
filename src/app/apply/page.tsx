@@ -299,8 +299,11 @@ export default function ApplyPage() {
             className="font-sans font-semibold text-[0.9rem] text-black bg-white px-10 py-3.5 rounded-full hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed max-sm:w-full max-sm:py-4">
             {submitting ? "submitting..." : "submit application"}
           </button>
+          <p className="font-sans font-light text-[0.65rem] text-[#5a5854] leading-[1.6] max-w-[520px] text-center mt-1 max-sm:text-[0.65rem] max-sm:break-words">
+            by clicking &ldquo;submit application,&rdquo; you acknowledge and agree that endless founders may collect, use, and disclose your personal data to third parties for the purposes of administering and coordinating the company&rsquo;s founder program, facilitating marketing and communications related to the program, and registering or enrolling you with innovation accelerator labs or related programs.
+          </p>
           <p className="font-sans font-light text-[0.75rem] text-[#807d78] max-sm:text-[0.75rem] max-sm:break-words">
-            if you have any issues, email support@endlessfounder.live
+            if you have any issues, email cadenchiang@berkeley.edu
           </p>
         </div>
       </main>
